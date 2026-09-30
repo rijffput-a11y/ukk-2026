@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 23 Sep 2026 pada 07.26
+-- Waktu pembuatan: 30 Sep 2026 pada 02.44
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 8.0.25
 
@@ -43,56 +43,56 @@ CREATE TABLE `t_guru` (
 --
 
 INSERT INTO `t_guru` (`id`, `nip`, `nama`, `email`, `status_aktif`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, '19800101201002', 'Grd. Fajar Wibowo, S.Pd.', 'guru1@sekolah.sch.id', 1, 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(2, '19800101201003', 'Grd. Gita Hidayat, S.Pd.', 'guru2@sekolah.sch.id', 1, 2, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(3, '19800101201004', 'Grd. Anisa Nugroho, S.Pd.', 'guru3@sekolah.sch.id', 1, 3, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(4, '19800101201005', 'Grd. Irfan Ramadhan, S.Pd.', 'guru4@sekolah.sch.id', 1, 4, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(5, '19800101201006', 'Grd. Ayu Wibowo, S.Pd.', 'guru5@sekolah.sch.id', 1, 5, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(6, '19800101201007', 'Grd. Cahyo Suryono, S.Pd.', 'guru6@sekolah.sch.id', 1, 6, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(7, '19800101201008', 'Grd. Utami Siregar, S.Pd.', 'guru7@sekolah.sch.id', 1, 7, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(8, '19800101201009', 'Grd. Maya Saputra, S.Pd.', 'guru8@sekolah.sch.id', 1, 8, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(9, '19800101201010', 'Grd. Eko Utomo, S.Pd.', 'guru9@sekolah.sch.id', 1, 9, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(10, '19800101201011', 'Grd. Tri Wijaya, S.Pd.', 'guru10@sekolah.sch.id', 1, 10, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(11, '19800101201012', 'Grd. Hardi Santoso, S.Pd.', 'guru11@sekolah.sch.id', 1, 11, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(12, '19800101201013', 'Grd. Bunga Kusuma, S.Pd.', 'guru12@sekolah.sch.id', 1, 12, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(13, '19800101201014', 'Grd. Rizky Pratama, S.Pd.', 'guru13@sekolah.sch.id', 1, 13, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(14, '19800101201015', 'Grd. Zahra Setiawan, S.Pd.', 'guru14@sekolah.sch.id', 1, 14, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(15, '19800101201016', 'Grd. Muhammad Hadi, S.Pd.', 'guru15@sekolah.sch.id', 1, 15, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(16, '19800101201017', 'Grd. Dwi Firmansyah, S.Pd.', 'guru16@sekolah.sch.id', 1, 16, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(17, '19800101201018', 'Grd. Budi Nasution, S.Pd.', 'guru17@sekolah.sch.id', 1, 17, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(18, '19800101201019', 'Grd. Vina Suharto, S.Pd.', 'guru18@sekolah.sch.id', 1, 18, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(19, '19800101201020', 'Grd. Naufal Wibowo, S.Pd.', 'guru19@sekolah.sch.id', 1, 19, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(20, '19800101201021', 'Grd. Taufik Saputra, S.Pd.', 'guru20@sekolah.sch.id', 1, 20, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(21, '19800101201022', 'Grd. Deni Hidayat, S.Pd.', 'guru21@sekolah.sch.id', 1, 21, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(22, '19800101201023', 'Grd. Nabila Santoso, S.Pd.', 'guru22@sekolah.sch.id', 1, 22, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(23, '19800101201024', 'Grd. Joko Pratama, S.Pd.', 'guru23@sekolah.sch.id', 1, 23, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(24, '19800101201025', 'Grd. Citra Kusuma, S.Pd.', 'guru24@sekolah.sch.id', 1, 24, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(25, '19800101201026', 'Grd. Satria Nugroho, S.Pd.', 'guru25@sekolah.sch.id', 1, 25, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(26, '19800101201027', 'Grd. Wulandari Suryono, S.Pd.', 'guru26@sekolah.sch.id', 1, 26, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(27, '19800101201028', 'Grd. Wahyu Ramadhan, S.Pd.', 'guru27@sekolah.sch.id', 1, 27, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(28, '19800101201029', 'Grd. Putri Utomo, S.Pd.', 'guru28@sekolah.sch.id', 1, 28, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(29, '19800101201030', 'Grd. Pratama Setiawan, S.Pd.', 'guru29@sekolah.sch.id', 1, 29, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(30, '19800101201031', 'Grd. Rina Hadi, S.Pd.', 'guru30@sekolah.sch.id', 1, 30, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(31, '19800101201032', 'Grd. Oki Firmansyah, S.Pd.', 'guru31@sekolah.sch.id', 1, 31, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(32, '19800101201033', 'Grd. Yuni Siregar, S.Pd.', 'guru32@sekolah.sch.id', 1, 32, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(33, '19800101201034', 'Grd. Kurnia Nasution, S.Pd.', 'guru33@sekolah.sch.id', 1, 33, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(34, '19800101201035', 'Grd. Fitri Wibowo, S.Pd.', 'guru34@sekolah.sch.id', 1, 34, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(35, '19800101201036', 'Grd. Lutfi Suharto, S.Pd.', 'guru35@sekolah.sch.id', 1, 35, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(36, '19800101201037', 'Grd. Eka Saputra, S.Pd.', 'guru36@sekolah.sch.id', 1, 36, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(37, '19800101201038', 'Grd. Ahmad Wijaya, S.Pd.', 'guru37@sekolah.sch.id', 1, 37, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(38, '19800101201039', 'Grd. Indah Hidayat, S.Pd.', 'guru38@sekolah.sch.id', 1, 38, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(39, '19800101201040', 'Grd. Lestari Santoso, S.Pd.', 'guru39@sekolah.sch.id', 1, 39, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(40, '19800101201041', 'Grd. Siti Pratama, S.Pd.', 'guru40@sekolah.sch.id', 1, 40, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(41, '19800101201042', 'Grd. Fajar Kusuma, S.Pd.', 'guru41@sekolah.sch.id', 1, 41, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(42, '19800101201043', 'Grd. Gita Nugroho, S.Pd.', 'guru42@sekolah.sch.id', 1, 42, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(43, '19800101201044', 'Grd. Budi Suryono, S.Pd.', 'guru43@sekolah.sch.id', 1, 43, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(44, '19800101201045', 'Grd. Anisa Ramadhan, S.Pd.', 'guru44@sekolah.sch.id', 1, 44, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(45, '19800101201046', 'Grd. Irfan Utomo, S.Pd.', 'guru45@sekolah.sch.id', 1, 45, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(46, '19800101201047', 'Grd. Cahyo Setiawan, S.Pd.', 'guru46@sekolah.sch.id', 1, 46, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(47, '19800101201048', 'Grd. Ayu Hadi, S.Pd.', 'guru47@sekolah.sch.id', 1, 47, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(48, '19800101201049', 'Grd. Utami Firmansyah, S.Pd.', 'guru48@sekolah.sch.id', 1, 48, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(49, '19800101201050', 'Grd. Maya Siregar, S.Pd.', 'guru49@sekolah.sch.id', 1, 49, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(50, '19800101201051', 'Grd. Eko Nasution, S.Pd.', 'guru50@sekolah.sch.id', 1, 50, '2026-09-23 02:31:56', '2026-09-23 02:31:56');
+(1, '19800101201002', 'Grd. Fajar Wibowo, S.Pd.', 'guru1@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(2, '19800101201003', 'Grd. Gita Hidayat, S.Pd.', 'guru2@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(3, '19800101201004', 'Grd. Anisa Nugroho, S.Pd.', 'guru3@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(4, '19800101201005', 'Grd. Irfan Ramadhan, S.Pd.', 'guru4@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(5, '19800101201006', 'Grd. Ayu Wibowo, S.Pd.', 'guru5@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(6, '19800101201007', 'Grd. Cahyo Suryono, S.Pd.', 'guru6@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(7, '19800101201008', 'Grd. Utami Siregar, S.Pd.', 'guru7@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(8, '19800101201009', 'Grd. Maya Saputra, S.Pd.', 'guru8@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(9, '19800101201010', 'Grd. Eko Utomo, S.Pd.', 'guru9@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(10, '19800101201011', 'Grd. Tri Wijaya, S.Pd.', 'guru10@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(11, '19800101201012', 'Grd. Hardi Santoso, S.Pd.', 'guru11@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(12, '19800101201013', 'Grd. Bunga Kusuma, S.Pd.', 'guru12@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(13, '19800101201014', 'Grd. Rizky Pratama, S.Pd.', 'guru13@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(14, '19800101201015', 'Grd. Zahra Setiawan, S.Pd.', 'guru14@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(15, '19800101201016', 'Grd. Muhammad Hadi, S.Pd.', 'guru15@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(16, '19800101201017', 'Grd. Dwi Firmansyah, S.Pd.', 'guru16@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(17, '19800101201018', 'Grd. Budi Nasution, S.Pd.', 'guru17@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(18, '19800101201019', 'Grd. Vina Suharto, S.Pd.', 'guru18@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(19, '19800101201020', 'Grd. Naufal Wibowo, S.Pd.', 'guru19@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(20, '19800101201021', 'Grd. Taufik Saputra, S.Pd.', 'guru20@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(21, '19800101201022', 'Grd. Deni Hidayat, S.Pd.', 'guru21@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(22, '19800101201023', 'Grd. Nabila Santoso, S.Pd.', 'guru22@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(23, '19800101201024', 'Grd. Joko Pratama, S.Pd.', 'guru23@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(24, '19800101201025', 'Grd. Citra Kusuma, S.Pd.', 'guru24@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(25, '19800101201026', 'Grd. Satria Nugroho, S.Pd.', 'guru25@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(26, '19800101201027', 'Grd. Wulandari Suryono, S.Pd.', 'guru26@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(27, '19800101201028', 'Grd. Wahyu Ramadhan, S.Pd.', 'guru27@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(28, '19800101201029', 'Grd. Putri Utomo, S.Pd.', 'guru28@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(29, '19800101201030', 'Grd. Pratama Setiawan, S.Pd.', 'guru29@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(30, '19800101201031', 'Grd. Rina Hadi, S.Pd.', 'guru30@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(31, '19800101201032', 'Grd. Oki Firmansyah, S.Pd.', 'guru31@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(32, '19800101201033', 'Grd. Yuni Siregar, S.Pd.', 'guru32@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(33, '19800101201034', 'Grd. Kurnia Nasution, S.Pd.', 'guru33@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(34, '19800101201035', 'Grd. Fitri Wibowo, S.Pd.', 'guru34@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(35, '19800101201036', 'Grd. Lutfi Suharto, S.Pd.', 'guru35@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(36, '19800101201037', 'Grd. Eka Saputra, S.Pd.', 'guru36@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(37, '19800101201038', 'Grd. Ahmad Wijaya, S.Pd.', 'guru37@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(38, '19800101201039', 'Grd. Indah Hidayat, S.Pd.', 'guru38@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(39, '19800101201040', 'Grd. Lestari Santoso, S.Pd.', 'guru39@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(40, '19800101201041', 'Grd. Siti Pratama, S.Pd.', 'guru40@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(41, '19800101201042', 'Grd. Fajar Kusuma, S.Pd.', 'guru41@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(42, '19800101201043', 'Grd. Gita Nugroho, S.Pd.', 'guru42@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(43, '19800101201044', 'Grd. Budi Suryono, S.Pd.', 'guru43@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(44, '19800101201045', 'Grd. Anisa Ramadhan, S.Pd.', 'guru44@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(45, '19800101201046', 'Grd. Irfan Utomo, S.Pd.', 'guru45@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(46, '19800101201047', 'Grd. Cahyo Setiawan, S.Pd.', 'guru46@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(47, '19800101201048', 'Grd. Ayu Hadi, S.Pd.', 'guru47@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(48, '19800101201049', 'Grd. Utami Firmansyah, S.Pd.', 'guru48@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(49, '19800101201050', 'Grd. Maya Siregar, S.Pd.', 'guru49@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
+(50, '19800101201051', 'Grd. Eko Nasution, S.Pd.', 'guru50@sekolah.sch.id', 1, NULL, '2026-09-23 02:31:56', '2026-09-23 02:31:56');
 
 -- --------------------------------------------------------
 
@@ -638,56 +638,8 @@ CREATE TABLE `t_users` (
 --
 
 INSERT INTO `t_users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'Eko Wibowo', 'user1@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'admin', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(2, 'Muhammad Saputra', 'user2@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(3, 'Cahyo Santoso', 'user3@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(4, 'Siti Wulandari', 'user4@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(5, 'Satria Kusuma', 'user5@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(6, 'Rina Utomo', 'user6@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(7, 'Fajar Nugroho', 'user7@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(8, 'Indah Pratama', 'user8@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(9, 'Budi Suryono', 'user9@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(10, 'Ayu Setiawan', 'user10@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(11, 'Kurnia Hadi', 'user11@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'admin', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(12, 'Maya Siregar', 'user12@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(13, 'Lutfi Ramadhan', 'user13@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(14, 'Nabila Hidayat', 'user14@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(15, 'Taufik Firmansyah', 'user15@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(16, 'Tri Wijaya', 'user16@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(17, 'Naufal Nasution', 'user17@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(18, 'Fitri Suharto', 'user18@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(19, 'Joko Saputra', 'user19@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(20, 'Vina Pratama', 'user20@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(21, 'Wahyu Hidayat', 'user21@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(22, 'Citra Kusuma', 'user22@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(23, 'Ahmad Santoso', 'user23@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(24, 'Dwi Suryono', 'user24@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(25, 'Irfan Wibowo', 'user25@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'admin', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(26, 'Zahra Ramadhan', 'user26@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(27, 'Deni Setiawan', 'user27@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(28, 'Putri Siregar', 'user28@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(29, 'Oki Hadi', 'user29@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(30, 'Utami Nasution', 'user30@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(31, 'Pratama Firmansyah', 'user31@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(32, 'Anisa Wijaya', 'user32@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(33, 'Gita Nugroho', 'user33@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(34, 'Bunga Hidayat', 'user34@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(35, 'Hardi Suharto', 'user35@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(36, 'Eka Utomo', 'user36@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(37, 'Rizky Saputra', 'user37@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(38, 'Yuni Lestari', 'user38@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(39, 'Ahmad Santoso', 'user39@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(40, 'Lestari Wibowo', 'user40@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(41, 'Muhammad Kusuma', 'user41@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'admin', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(42, 'Dwi Siregar', 'user42@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(43, 'Cahyo Pratama', 'user43@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(44, 'Indah Nasution', 'user44@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(45, 'Eko Suryono', 'user45@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'wali_kelas', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(46, 'Citra Hadi', 'user46@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(47, 'Satria Ramadhan', 'user47@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(48, 'Nabila Setiawan', 'user48@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(49, 'Fajar Firmansyah', 'user49@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'guru', '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(50, 'Ayu Wijaya', 'user50@sekolah.sch.id', '2026-09-23 02:31:56', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe1a.63R/2X2o.z03Xz.z03Xz03Xz03Xz', NULL, 'siswa', '2026-09-23 02:31:56', '2026-09-23 02:31:56');
+(1, 'Administrator Utama', 'admin@gmail.com', NULL, '$2y$10$qR6iU7X2E4rYI6J1Jp7Nne9G9N0oV3v4L3mZ2a1bC5dE6fG7h8i9j', NULL, 'admin', NULL, NULL),
+(2, 'Guru Pengajar', 'guru@gmail.com', NULL, '$2y$10$qR6iU7X2E4rYI6J1Jp7Nne9G9N0oV3v4L3mZ2a1bC5dE6fG7h8i9j', NULL, 'guru', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -897,7 +849,7 @@ ALTER TABLE `t_tahun_ajaran`
 -- AUTO_INCREMENT untuk tabel `t_users`
 --
 ALTER TABLE `t_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_wali_kelas`
