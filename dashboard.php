@@ -34,26 +34,26 @@ $nama = $_SESSION['nama_user'];
 
         <!-- Menu Khusus Admin -->
         <?php if ($role === 'admin'): ?>
-            <li class="nav-item mb-2"><a href="kelola_siswa.php" class="nav-link text-white">Kelola Siswa</a></li>
             <li class="nav-item mb-2"><a href="kelola_guru.php" class="nav-link text-white">Kelola Guru</a></li>
+            <li class="nav-item mb-2"><a href="kelola_siswa.php" class="nav-link text-white">Kelola Siswa</a></li>
             <li class="nav-item mb-2"><a href="kelola_kelas.php" class="nav-link text-white">Kelola Kelas</a></li>
             <li class="nav-item mb-2"><a href="kelola_tahun_ajaran.php" class="nav-link text-white">Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-2"><a href="penempatan_siswa.php" class="nav-link text-white">Penempatan Siswa</a></li>
             <li class="nav-item mb-2"><a href="kelola_wali_kelas.php" class="nav-link text-white">Kelola Wali Kelas</a></li>
-            <li class="nav-item mb-2"><a href="kelola_kategori.php" class="nav-link text-white">Kelola Kategori</a></li>
+            <li class="nav-item mb-2"><a href="kelola_kategori_Pelanggaran.php" class="nav-link text-white">Kelola Kategori Pelanggaran</a></li>
+            <li class="nav-item mb-2"><a href="laporan.php" class="nav-link text-white">laporan</a></li>
             <li class="nav-item mb-2"><a href="kelola_jenis_pelanggaran.php" class="nav-link text-white">Kelola Jenis Pelanggaran</a></li>
-            <li class="nav-item mb-2"><a href="cetak_export.php" class="nav-link text-white">Cetak / Export</a></li>
+            <li class="nav-item mb-2"><a 
+            href="cetak/export.php" class="nav-link text-white">Cetak / Export</a></li>
             <li class="nav-item mb-2"><a href="about_me.php" class="nav-link text-white">About Me</a></li>
         <?php endif; ?>
 
         <!-- Menu untuk Guru & Admin -->
-        <?php if ($role === 'guru' || $role === 'admin'): ?>
+        <?php if ($role === 'guru'): ?>
             <li class="nav-item mb-2"><a href="catat_pelanggaran.php" class="nav-link text-white">Catat Pelanggaran</a></li>
             <li class="nav-item mb-2"><a href="tindakan.php" class="nav-link text-white">Tindakan</a></li>
-            <li class="nav-item mb-2"><a href="laporan.php" class="nav-link text-white">Laporan</a></li>
             <li class="nav-item mb-2"><a href="riwayat.php" class="nav-link text-white">Riwayat</a></li>
             <li class="nav-item mb-2"><a href="rekap_poin.php" class="nav-link text-white">Rekap Poin</a></li>
-            <li class="nav-item mb-2"><a href="about_me.php" class="nav-link text-white">About Me</a></li>
         <?php endif; ?>
 
         <hr class="text-secondary">
