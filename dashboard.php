@@ -41,7 +41,6 @@ $nama = $_SESSION['nama_user'];
                 <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
                 <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
                 <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="cetak_export.php">Cetak / Export</a></li>
                 <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
             <?php endif; ?>
 
@@ -50,6 +49,7 @@ $nama = $_SESSION['nama_user'];
                 <li class="nav-item mb-1"><a href="tindakan.php">Tindakan</a></li>
                 <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
                 <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
+                <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
             <?php endif; ?>
         </ul>
         <hr>

@@ -1,78 +1,107 @@
 <?php
 require_once 'koneksi.php';
+if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$role = $_SESSION['role'];
-// Menggunakan nama Anda secara langsung
-$nama = "Junita Putri Nur Rahman";
+$nama_user = $_SESSION['nama_user'] ?? 'Junita Putri Nur Rahman';
+$role = $_SESSION['role'] ?? 'admin';
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me - Sistem Pelanggaran</title>
-    <!-- CSS Bootstrap 5 -->
+    <meta charset="UTF-8"><title>About Me - Pelanggaran Siswa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
+        .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .profile-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 3px solid #0d6efd; }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-    <div class="container-fluid">
+    <!-- SIDEBAR -->
+    <div class="sidebar d-flex flex-column p-3">
+        <h4 class="text-white mb-4">Pelanggaran Siswa</h4>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
+            <?php if ($role === 'admin'): ?>
+                <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
+                <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
+                <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
+                <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
+                <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
+                <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
+                <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
+                <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
+                <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+                <li class="nav-item mb-1"><a href="cetak_export.php">Cetak / Export</a></li>
+                <li class="nav-item mb-1"><a href="about_me.php" class="active">About Me</a></li>
+            <?php endif; ?>
+
+            <?php if ($role === 'guru'): ?>
+                <li class="nav-item mb-1"><a href="catat_pelanggaran.php">Catat Pelanggaran</a></li>
+                <li class="nav-item mb-1"><a href="tindakan.php">Tindakan</a></li>
+                <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
+                <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
+                <li class="nav-item mb-1"><a href="about_me.php" >About Me</a></li>
+            <?php endif; ?>
+        </ul>
+        <hr>
+        <a href="logout.php" class="text-danger">Logout</a>
+    </div>
+    
+    <div class="main-content">
+        <h2>About Me</h2>
+        <p>Informasi profil pengembang dan pengelola sistem.</p>
+        <hr>
+
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 bg-dark min-vh-100 p-3">
-                <h4 class="text-white mb-4">My Website</h4>
-                <ul class="nav nav-pills flex-column">
-                    <li class="nav-item mb-2">
-                        <a href="dashboard.php" class="nav-link text-white"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a href="about.php" class="nav-link active"><i class="bi bi-person-circle me-2"></i> About Me</a>
-                    </li>
-                    <hr class="text-secondary">
-                    <li class="nav-item">
-                        <a href="logout.php" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
-                    </li>
-                </ul>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm text-center p-4">
+                    <div class="mb-3">
+                        <!-- Placeholder foto profil, ganti path gambar jika ada -->
+                        <img src="https://ui-avatars.com/api/?name=Junita+Putri+Nur+Rahman&background=0d6efd&color=fff&size=150" alt="Foto Profil" class="profile-img mx-auto">
+                    </div>
+                    <h4>Junita Putri Nur Rahman</h4>
+                    <p class="text-muted mb-1">XII RPL 2</p>
+                    <span class="badge bg-primary">Software Engineering</span>
+                </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 p-4">
-                <div class="mb-4">
-                    <h1 class="fw-bold">About Me</h1>
-                    <p class="text-muted">Informasi profil pengembang atau pengguna sistem.</p>
-                    <hr>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 col-lg-5">
-                        <div class="card shadow-sm border-0 rounded-4 p-4 text-center">
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <i class="bi bi-person-circle text-secondary" style="font-size: 5rem;"></i>
-                                </div>
-                                <h3 class="fw-bold mb-1"><?= htmlspecialchars($nama); ?></h3>
-                                <p class="text-muted mb-3"><span class="badge bg-danger"><?= strtoupper(htmlspecialchars($role)); ?></span></p>
-                                <hr>
-                                <p class="text-start mb-2"><strong>Aplikasi:</strong> Sistem Informasi Pelanggaran Siswa</p>
-                                <p class="text-start mb-2"><strong>Institusi:</strong> SMK Muhammadiyah</p>
-                                <p class="text-start mb-0"><strong>Tahun:</strong> 2026</p>
-                            </div>
-                        </div>
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Profil Singkat</h4>
+                        <table class="table table-borderless align-middle">
+                            <tr>
+                                <th width="35%">Nama Lengkap</th>
+                                <td>: Junita Putri Nur Rahman</td>
+                            </tr>
+                            <tr>
+                                <th>Kelas / Jurusan</th>
+                                <td>: XII RPL 2 / Rekayasa Perangkat Lunak</td>
+                            </tr>
+                            <tr>
+                                <th>Sekolah</th>
+                                <td>: SMK Muhammadiyah</td>
+                            </tr>
+                            <tr>
+                                <th>Fokus Keahlian</th>
+                                <td>: Web Development (PHP, MySQL, Bootstrap 5) & Database Design</td>
+                            </tr>
+                            <tr>
+                                <th>Tentang Proyek</th>
+                                <td>: Sistem Informasi Pelanggaran Siswa ini dikembangkan untuk mempermudah pencatatan, pemantauan poin kedisiplinan, serta pengelolaan tindakan siswa secara terstruktur.</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JS Bootstrap 5 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
