@@ -26,7 +26,26 @@ if (isset($_GET['hapus'])) {
 }
 
 $edit = isset($_GET['edit']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE id='{$_GET['edit']}'")) : ['id'=>'','nama'=>'','tanggal_mulai'=>'','tanggal_selesai'=>'','status_aktif'=>''];
-$data = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran");
+
+// Konfigurasi Pagination (10 data per halaman)
+$batas = 10;
+$halaman = isset($_GET['halaman']) ? (int)$_GET['halaman'] : 1;
+$halaman_awal = ($halaman > 1) ? ($halaman * $batas) - $batas : 0;
+
+$cari = isset($_GET['cari']) ? $_GET['cari'] : '';
+$where = $cari ? "WHERE nama LIKE '%$cari%' OR tanggal_mulai LIKE '%$cari%' OR tanggal_selesai LIKE '%$cari%'" : "";
+
+// Hitung total data & total halaman
+$query_jumlah = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran $where");
+$total_data = mysqli_num_rows($query_jumlah);
+$total_halaman = ceil($total_data / $batas);
+
+// Ambil data sesuai halaman
+$data = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran $where LIMIT $halaman_awal, $batas");
+$nomor = $halaman_awal + 1;
+$jumlah_tampil = mysqli_num_rows($data);
+$tampilkan_dari = $total_data > 0 ? $halaman_awal + 1 : 0;
+$tampilkan_sampai = $halaman_awal + $jumlah_tampil;
 ?>
 
 <!DOCTYPE html>
@@ -76,43 +95,34 @@ $data = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran");
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        <h2>Kelola Tahun Ajaran</h2>
-        <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
-
-        <!-- FORM INPUT / EDIT -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <form method="POST">
-                    <input type="hidden" name="id" value="<?= $edit['id']; ?>">
-                    <div class="mb-3">
-                        <label class="form-label">Tahun Ajaran (Contoh: 2026/2027):</label>
-                        <input type="text" name="nama" class="form-control" value="<?= $edit['nama']; ?>" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Tanggal Mulai:</label>
-                        <input type="date" name="tanggal_mulai" class="form-control" value="<?= $edit['tanggal_mulai']; ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Tanggal Selesai:</label>
-                        <input type="date" name="tanggal_selesai" class="form-control" value="<?= $edit['tanggal_selesai']; ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Status Aktif (1 = Aktif, 0 = Tidak Aktif):</label>
-                        <input type="number" name="status_aktif" class="form-control" min="0" max="1" value="<?= $edit['status_aktif']; ?>" required>
-                    </div>
-                    
-                    <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
-                    <?php if($edit['id']): ?><a href="kelola_tahun_ajaran.php" class="btn btn-secondary">Batal</a><?php endif; ?>
-                </form>
-            </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2>Kelola Tahun Ajaran</h2>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTahunAjaran">+ Tambah Tahun Ajaran</button>
         </div>
+        <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
 
         <!-- TABEL DATA -->
         <div class="card shadow-sm">
             <div class="card-body">
+                <!-- BARIS FILTER & PENCARIAN -->
+                <div class="row mb-3 justify-content-between">
+                    <div class="col-auto d-flex align-items-center">
+                        <span class="me-2">Tampilkan</span>
+                        <select class="form-select form-select-sm d-inline-block w-auto">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span class="ms-2">data</span>
+                    </div>
+                    <div class="col-auto">
+                        <form method="GET" class="d-flex align-items-center">
+                            <label class="me-2 mb-0 fw-bold">Cari:</label>
+                            <input type="text" name="cari" class="form-control form-control-sm" value="<?= htmlspecialchars($cari); ?>">
+                        </form>
+                    </div>
+                </div>
+
                 <table class="table table-bordered table-striped align-middle">
                     <thead class="table-dark">
                         <tr>
@@ -125,25 +135,105 @@ $data = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran");
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no=1; while($r = mysqli_fetch_assoc($data)): ?>
+                        <?php while($r = mysqli_fetch_assoc($data)): ?>
                         <tr>
-                            <td><?= $no++; ?></td>
-                            <td><?= $r['nama']; ?></td>
-                            <td><?= $r['tanggal_mulai']; ?></td>
-                            <td><?= $r['tanggal_selesai']; ?></td>
-                            <td><?= $r['status_aktif']; ?></td>
+                            <td><?= $nomor++; ?></td>
+                            <td><?= htmlspecialchars($r['nama']); ?></td>
+                            <td><?= htmlspecialchars($r['tanggal_mulai']); ?></td>
+                            <td><?= htmlspecialchars($r['tanggal_selesai']); ?></td>
+                            <td><?= htmlspecialchars($r['status_aktif']); ?></td>
                             <td class="text-center">
                                 <a href="kelola_tahun_ajaran.php?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a> | 
                                 <a href="kelola_tahun_ajaran.php?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
                             </td>
                         </tr>
                         <?php endwhile; ?>
+                        <?php if($total_data == 0): ?>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Data tahun ajaran tidak ditemukan.</td>
+                        </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
+
+                <!-- KETERANGAN & PAGINATION -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-muted">Menampilkan <?= $tampilkan_dari; ?> sampai <?= $tampilkan_sampai; ?> dari <?= $total_data; ?> data tahun ajaran</small>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <!-- Tombol Pertama -->
+                            <li class="page-item <?= ($halaman <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=1<?= $cari ? '&cari='.$cari : ''; ?>">Pertama</a>
+                            </li>
+                            <!-- Tombol Sebelumnya -->
+                            <li class="page-item <?= ($halaman <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=<?= $halaman - 1; ?><?= $cari ? '&cari='.$cari : ''; ?>">Sebelumnya</a>
+                            </li>
+                            
+                            <!-- Nomor Halaman -->
+                            <?php for($x = 1; $x <= max($total_halaman, 1); $x++): ?>
+                                <li class="page-item <?= ($halaman == $x) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?halaman=<?= $x; ?><?= $cari ? '&cari='.$cari : ''; ?>"><?= $x; ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <!-- Tombol Berikutnya -->
+                            <li class="page-item <?= ($halaman >= $total_halaman) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=<?= $halaman + 1; ?><?= $cari ? '&cari='.$cari : ''; ?>">Berikutnya</a>
+                            </li>
+                            <!-- Tombol Terakhir -->
+                            <li class="page-item <?= ($halaman >= $total_halaman) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=<?= max($total_halaman, 1); ?><?= $cari ? '&cari='.$cari : ''; ?>">Terakhir</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- MODAL TAMBAH / EDIT TAHUN AJARAN -->
+    <div class="modal fade" id="modalTahunAjaran" tabindex="-1">
+      <div class="modal-dialog">
+        <form method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><?= $edit['id'] ? 'Edit Tahun Ajaran' : 'Tambah Tahun Ajaran'; ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="id" value="<?= $edit['id']; ?>">
+            <div class="mb-3">
+                <label class="form-label">Tahun Ajaran (Contoh: 2026/2027):</label>
+                <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama']); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tanggal Mulai:</label>
+                <input type="date" name="tanggal_mulai" class="form-control" value="<?= htmlspecialchars($edit['tanggal_mulai']); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tanggal Selesai:</label>
+                <input type="date" name="tanggal_selesai" class="form-control" value="<?= htmlspecialchars($edit['tanggal_selesai']); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Status Aktif (1 = Aktif, 0 = Tidak Aktif):</label>
+                <input type="number" name="status_aktif" class="form-control" min="0" max="1" value="<?= htmlspecialchars($edit['status_aktif']); ?>" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="kelola_tahun_ajaran.php" class="btn btn-secondary">Tutup / Batal</a>
+            <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <?php if(isset($_GET['edit'])): ?>
+    <script>
+        // Otomatis membuka modal jika parameter ?edit= aktif
+        var myModal = new bootstrap.Modal(document.getElementById('modalTahunAjaran'));
+        myModal.show();
+    </script>
+    <?php endif; ?>
 </body>
 </html>

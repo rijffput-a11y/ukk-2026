@@ -36,7 +36,6 @@ $role = $_SESSION['role'] ?? 'admin';
                 <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
                 <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
                 <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="cetak_export.php">Cetak / Export</a></li>
                 <li class="nav-item mb-1"><a href="about_me.php" class="active">About Me</a></li>
             <?php endif; ?>
 

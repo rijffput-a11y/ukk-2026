@@ -7,13 +7,34 @@ $nama_user = $_SESSION['nama_user'] ?? 'Administrator';
 
 $tgl_mulai = $_GET['tgl_mulai'] ?? '';
 $tgl_selesai = $_GET['tgl_selesai'] ?? '';
+$cari = $_GET['cari'] ?? '';
 
-$where = "";
+$where_arr = [];
 if (!empty($tgl_mulai) && !empty($tgl_selesai)) {
-    $where = "WHERE tanggal BETWEEN '$tgl_mulai' AND '$tgl_selesai'";
+    $where_arr[] = "tanggal BETWEEN '$tgl_mulai' AND '$tgl_selesai'";
+}
+if (!empty($cari)) {
+    $where_arr[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%' OR nama_guru LIKE '%$cari%')";
 }
 
-$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC");
+$where = count($where_arr) > 0 ? "WHERE " . implode(" AND ", $where_arr) : "";
+
+// Konfigurasi Pagination (10 data per halaman)
+$batas = 10;
+$halaman = isset($_GET['halaman']) ? (int)$_GET['halaman'] : 1;
+$halaman_awal = ($halaman > 1) ? ($halaman * $batas) - $batas : 0;
+
+// Hitung total data & total halaman
+$query_jumlah = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where");
+$total_data = mysqli_num_rows($query_jumlah);
+$total_halaman = ceil($total_data / $batas);
+
+// Ambil data sesuai halaman
+$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC LIMIT $halaman_awal, $batas");
+$nomor = $halaman_awal + 1;
+$jumlah_tampil = mysqli_num_rows($data);
+$tampilkan_dari = $total_data > 0 ? $halaman_awal + 1 : 0;
+$tampilkan_sampai = $halaman_awal + $jumlah_tampil;
 ?>
 
 <!DOCTYPE html>
@@ -70,6 +91,9 @@ $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER B
         <div class="card shadow-sm mb-4 no-print">
             <div class="card-body">
                 <form method="GET" class="row g-3">
+                    <?php if (!empty($cari)): ?>
+                        <input type="hidden" name="cari" value="<?= htmlspecialchars($cari); ?>">
+                    <?php endif; ?>
                     <div class="col-md-3">
                         <label class="form-label">Tanggal Mulai:</label>
                         <input type="date" name="tgl_mulai" class="form-control" value="<?= htmlspecialchars($tgl_mulai); ?>" required>
@@ -100,10 +124,31 @@ $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER B
         <!-- TABEL LAPORAN -->
         <div class="card shadow-sm">
             <div class="card-body">
+                <!-- BARIS FILTER & PENCARIAN -->
+                <div class="row mb-3 justify-content-between no-print">
+                    <div class="col-auto d-flex align-items-center">
+                        <span class="me-2">Tampilkan</span>
+                        <select class="form-select form-select-sm d-inline-block w-auto">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <span class="ms-2">data</span>
+                    </div>
+                    <div class="col-auto">
+                        <form method="GET" class="d-flex align-items-center">
+                            <?php if (!empty($tgl_mulai)): ?><input type="hidden" name="tgl_mulai" value="<?= htmlspecialchars($tgl_mulai); ?>"><?php endif; ?>
+                            <?php if (!empty($tgl_selesai)): ?><input type="hidden" name="tgl_selesai" value="<?= htmlspecialchars($tgl_selesai); ?>"><?php endif; ?>
+                            <label class="me-2 mb-0 fw-bold">Cari:</label>
+                            <input type="text" name="cari" class="form-control form-control-sm" value="<?= htmlspecialchars($cari); ?>">
+                        </form>
+                    </div>
+                </div>
+
                 <table class="table table-bordered table-striped align-middle">
                     <thead class="table-dark text-center">
                         <tr>
-                            <th>No</th>
+                            <th width="5%">No</th>
                             <th>Tanggal</th>
                             <th>Nama Siswa</th>
                             <th>Kelas</th>
@@ -114,22 +159,56 @@ $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER B
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no=1; while($r = mysqli_fetch_assoc($data)): ?>
+                        <?php while($r = mysqli_fetch_assoc($data)): ?>
                         <tr>
-                            <td class="text-center"><?= $no++; ?></td>
-                            <td class="text-center"><?= $r['tanggal']; ?></td>
-                            <td><?= $r['nama_siswa']; ?></td>
-                            <td><?= $r['nama_kelas']; ?></td>
-                            <td><?= $r['nama_pelanggaran']; ?></td>
-                            <td class="text-center"><span class="badge bg-danger"><?= $r['poin']; ?></span></td>
-                            <td><?= $r['nama_guru']; ?></td>
-                            <td class="text-center"><span class="badge bg-info text-dark"><?= $r['status']; ?></span></td>
+                            <td class="text-center"><?= $nomor++; ?></td>
+                            <td class="text-center"><?= htmlspecialchars($r['tanggal']); ?></td>
+                            <td><?= htmlspecialchars($r['nama_siswa']); ?></td>
+                            <td><?= htmlspecialchars($r['nama_kelas']); ?></td>
+                            <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
+                            <td class="text-center"><span class="badge bg-danger"><?= htmlspecialchars($r['poin']); ?></span></td>
+                            <td><?= htmlspecialchars($r['nama_guru']); ?></td>
+                            <td class="text-center"><span class="badge bg-info text-dark"><?= htmlspecialchars($r['status']); ?></span></td>
                         </tr>
-                        <?php endwhile; if(mysqli_num_rows($data)==0): ?>
-                        <tr><td colspan="8" class="text-center">Data tidak ditemukan.</td></tr>
+                        <?php endwhile; ?>
+                        <?php if($total_data == 0): ?>
+                        <tr><td colspan="8" class="text-center text-muted">Data laporan pelanggaran tidak ditemukan.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
+
+                <!-- KETERANGAN & PAGINATION -->
+                <div class="d-flex justify-content-between align-items-center mt-3 no-print">
+                    <small class="text-muted">Menampilkan <?= $tampilkan_dari; ?> sampai <?= $tampilkan_sampai; ?> dari <?= $total_data; ?> data laporan</small>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <!-- Tombol Pertama -->
+                            <li class="page-item <?= ($halaman <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=1<?= $tgl_mulai ? '&tgl_mulai='.$tgl_mulai : ''; ?><?= $tgl_selesai ? '&tgl_selesai='.$tgl_selesai : ''; ?><?= $cari ? '&cari='.$cari : ''; ?>">Pertama</a>
+                            </li>
+                            <!-- Tombol Sebelumnya -->
+                            <li class="page-item <?= ($halaman <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=<?= $halaman - 1; ?><?= $tgl_mulai ? '&tgl_mulai='.$tgl_mulai : ''; ?><?= $tgl_selesai ? '&tgl_selesai='.$tgl_selesai : ''; ?><?= $cari ? '&cari='.$cari : ''; ?>">Sebelumnya</a>
+                            </li>
+                            
+                            <!-- Nomor Halaman -->
+                            <?php for($x = 1; $x <= max($total_halaman, 1); $x++): ?>
+                                <li class="page-item <?= ($halaman == $x) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?halaman=<?= $x; ?><?= $tgl_mulai ? '&tgl_mulai='.$tgl_mulai : ''; ?><?= $tgl_selesai ? '&tgl_selesai='.$tgl_selesai : ''; ?><?= $cari ? '&cari='.$cari : ''; ?>"><?= $x; ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <!-- Tombol Berikutnya -->
+                            <li class="page-item <?= ($halaman >= $total_halaman) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=<?= $halaman + 1; ?><?= $tgl_mulai ? '&tgl_mulai='.$tgl_mulai : ''; ?><?= $tgl_selesai ? '&tgl_selesai='.$tgl_selesai : ''; ?><?= $cari ? '&cari='.$cari : ''; ?>">Berikutnya</a>
+                            </li>
+                            <!-- Tombol Terakhir -->
+                            <li class="page-item <?= ($halaman >= $total_halaman) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?halaman=<?= max($total_halaman, 1); ?><?= $tgl_mulai ? '&tgl_mulai='.$tgl_mulai : ''; ?><?= $tgl_selesai ? '&tgl_selesai='.$tgl_selesai : ''; ?><?= $cari ? '&cari='.$cari : ''; ?>">Terakhir</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
 
