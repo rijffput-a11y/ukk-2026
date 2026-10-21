@@ -3,12 +3,7 @@ require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
 if (isset($_POST['simpan'])) {
-    $id = $_POST['id'];
-    $nip = $_POST['nip'];
-    $nama = $_POST['nama'];
-    $email = $_POST['email'];
-    $status = $_POST['status_aktif'];
-    
+    $id = $_POST['id']; $nip = $_POST['nip']; $nama = $_POST['nama']; $email = $_POST['email']; $status = $_POST['status_aktif'];
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_guru SET nip='$nip', nama='$nama', email='$email', status_aktif='$status' WHERE id='$id'");
     } else {
@@ -22,7 +17,7 @@ if (isset($_GET['hapus'])) {
     header("Location: kelola_guru.php"); exit();
 }
 
-$edit = isset($_GET['edit']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_guru WHERE id='{$_GET['edit']}'")) : ['id'=>'','nip'=>'','nama'=>'','email'=>'','status_aktif'=>'1'];
+$edit = isset($_GET['edit']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_guru WHERE id='{$_GET['edit']}'")) : ['id'=>'','nip'=>'','nama'=>'','email'=>'','status_aktif'=>'Aktif'];
 
 $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
@@ -85,31 +80,37 @@ $no = $offset + 1;
                 </div>
             </div>
 
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
-                    <tr><th>No</th><th>NIP</th><th>Nama Guru</th><th>Email</th><th>Status</th><th class="text-center">Aksi</th></tr>
-                </thead>
-                <tbody>
-                    <?php while($r = mysqli_fetch_assoc($data)): ?>
-                    <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= htmlspecialchars($r['nip']); ?></td>
-                        <td><?= htmlspecialchars($r['nama']); ?></td>
-                        <td><?= htmlspecialchars($r['email']); ?></td>
-                        <td><?= htmlspecialchars($r['status_aktif']); ?></td>
-                        <td class="text-center">
-                            <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
-                        </td>
-                    </tr>
-                    <?php endwhile; if(!$total): ?>
-                    <tr><td colspan="6" class="text-center text-muted">Data guru tidak ditemukan.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr><th>No</th><th>NIP</th><th>Nama Guru</th><th>Email</th><th>Status</th><th class="text-center">Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        <?php while($r = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++; ?></td>
+                            <td><?= htmlspecialchars($r['nip']); ?></td>
+                            <td><?= htmlspecialchars($r['nama']); ?></td>
+                            <td><?= htmlspecialchars($r['email']); ?></td>
+                            <td>
+                                <span class="badge bg-<?= ($r['status_aktif'] == 'Aktif' || $r['status_aktif'] == '1') ? 'success' : 'secondary'; ?>">
+                                    <?= ($r['status_aktif'] == '1' || $r['status_aktif'] == 'Aktif') ? 'Aktif' : 'Tidak Aktif'; ?>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
+                            </td>
+                        </tr>
+                        <?php endwhile; if(!$total): ?>
+                        <tr><td colspan="6" class="text-center text-muted">Data guru tidak ditemukan.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> - <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
+                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                 <ul class="pagination pagination-sm mb-0">
                     <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
                     <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
@@ -131,7 +132,12 @@ $no = $offset + 1;
             <div class="mb-3"><label class="form-label">NIP:</label><input type="text" name="nip" class="form-control" value="<?= htmlspecialchars($edit['nip']); ?>" required></div>
             <div class="mb-3"><label class="form-label">Nama Guru:</label><input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama']); ?>" required></div>
             <div class="mb-3"><label class="form-label">Email:</label><input type="email" name="email" class="form-control" value="<?= htmlspecialchars($edit['email']); ?>"></div>
-            <div class="mb-3"><label class="form-label">Status Aktif:</label><input type="number" name="status_aktif" class="form-control" min="0" max="1" value="<?= htmlspecialchars($edit['status_aktif']); ?>" required></div>
+            <div class="mb-3"><label class="form-label">Status:</label>
+                <select name="status_aktif" class="form-control" required>
+                    <option value="Aktif" <?= ($edit['status_aktif'] == 'Aktif' || $edit['status_aktif'] == '1') ? 'selected' : ''; ?>>Aktif</option>
+                    <option value="Tidak Aktif" <?= ($edit['status_aktif'] == 'Tidak Aktif' || $edit['status_aktif'] == '0') ? 'selected' : ''; ?>>Tidak Aktif</option>
+                </select>
+            </div>
         </div>
         <div class="modal-footer"><a href="kelola_guru.php" class="btn btn-secondary">Batal</a><button type="submit" name="simpan" class="btn btn-primary">Simpan</button></div>
       </form></div>

@@ -3,14 +3,8 @@ require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
 if (isset($_POST['simpan'])) {
-    $id = $_POST['id'];
-    $nis = $_POST['nis'];
-    $nisn = $_POST['nisn'];
-    $nama = $_POST['nama'];
-    $jk = $_POST['jenis_kelamin'];
-    $tgl = $_POST['tanggal_lahir'];
-    $alamat = $_POST['alamat'];
-    $status = $_POST['status_aktif'];
+    $id = $_POST['id']; $nis = $_POST['nis']; $nisn = $_POST['nisn']; $nama = $_POST['nama'];
+    $jk = $_POST['jenis_kelamin']; $tgl = $_POST['tanggal_lahir']; $alamat = $_POST['alamat']; $status = $_POST['status_aktif'];
     
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_siswa SET nis='$nis', nisn='$nisn', nama='$nama', jenis_kelamin='$jk', tanggal_lahir='$tgl', alamat='$alamat', status_aktif='$status' WHERE id='$id'");
@@ -25,7 +19,7 @@ if (isset($_GET['hapus'])) {
     header("Location: kelola_siswa.php"); exit();
 }
 
-$edit = isset($_GET['edit']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_siswa WHERE id='{$_GET['edit']}'")) : ['id'=>'','nis'=>'','nisn'=>'','nama'=>'','jenis_kelamin'=>'','tanggal_lahir'=>'','alamat'=>'','status_aktif'=>'1'];
+$edit = isset($_GET['edit']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_siswa WHERE id='{$_GET['edit']}'")) : ['id'=>'','nis'=>'','nisn'=>'','nama'=>'','jenis_kelamin'=>'','tanggal_lahir'=>'','alamat'=>'','status_aktif'=>'Aktif'];
 
 $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
@@ -88,33 +82,39 @@ $no = $offset + 1;
                 </div>
             </div>
 
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
-                    <tr><th>No</th><th>NIS</th><th>NISN</th><th>Nama Siswa</th><th>L/P</th><th>Alamat</th><th>Status</th><th class="text-center">Aksi</th></tr>
-                </thead>
-                <tbody>
-                    <?php while($r = mysqli_fetch_assoc($data)): ?>
-                    <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= htmlspecialchars($r['nis']); ?></td>
-                        <td><?= htmlspecialchars($r['nisn']); ?></td>
-                        <td><?= htmlspecialchars($r['nama']); ?></td>
-                        <td><?= htmlspecialchars($r['jenis_kelamin']); ?></td>
-                        <td><?= htmlspecialchars($r['alamat']); ?></td>
-                        <td><?= htmlspecialchars($r['status_aktif']); ?></td>
-                        <td class="text-center">
-                            <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
-                        </td>
-                    </tr>
-                    <?php endwhile; if(!$total): ?>
-                    <tr><td colspan="8" class="text-center text-muted">Data siswa tidak ditemukan.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr><th>No</th><th>NIS</th><th>NISN</th><th>Nama Siswa</th><th>L/P</th><th>Alamat</th><th>Status</th><th class="text-center">Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        <?php while($r = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $no++; ?></td>
+                            <td><?= htmlspecialchars($r['nis']); ?></td>
+                            <td><?= htmlspecialchars($r['nisn']); ?></td>
+                            <td><?= htmlspecialchars($r['nama']); ?></td>
+                            <td><?= htmlspecialchars($r['jenis_kelamin']); ?></td>
+                            <td><?= htmlspecialchars($r['alamat']); ?></td>
+                            <td>
+                                <span class="badge bg-<?= ($r['status_aktif'] == 'Aktif' || $r['status_aktif'] == '1') ? 'success' : 'secondary'; ?>">
+                                    <?= ($r['status_aktif'] == '1' || $r['status_aktif'] == 'Aktif') ? 'Aktif' : 'Tidak Aktif'; ?>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
+                            </td>
+                        </tr>
+                        <?php endwhile; if(!$total): ?>
+                        <tr><td colspan="8" class="text-center text-muted">Data siswa tidak ditemukan.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> - <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
+                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                 <ul class="pagination pagination-sm mb-0">
                     <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
                     <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
@@ -133,18 +133,23 @@ $no = $offset + 1;
         <div class="modal-header"><h5 class="modal-title"><?= $edit['id'] ? 'Edit' : 'Tambah'; ?> Siswa</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
             <input type="hidden" name="id" value="<?= $edit['id']; ?>">
-            <div class="mb-3"><label class="form-label">NIS:</label><input type="text" name="nis" class="form-control" value="<?= htmlspecialchars($edit['nis']); ?>" required></div>
-            <div class="mb-3"><label class="form-label">NISN:</label><input type="text" name="nisn" class="form-control" value="<?= htmlspecialchars($edit['nisn']); ?>"></div>
-            <div class="mb-3"><label class="form-label">Nama Siswa:</label><input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama']); ?>" required></div>
-            <div class="mb-3"><label class="form-label">Jenis Kelamin:</label>
+            <div class="mb-3"><label class="form-label">NIS (Maks. 8):</label><input type="text" name="nis" class="form-control" value="<?= htmlspecialchars($edit['nis']); ?>" maxlength="8" pattern="\d{1,8}" required></div>
+            <div class="mb-3"><label class="form-label">NISN (Maks. 10):</label><input type="text" name="nisn" class="form-control" value="<?= htmlspecialchars($edit['nisn']); ?>" maxlength="10" pattern="\d{1,10}"></div>
+            <div class="mb-3"><label class="form-label">Nama:</label><input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama']); ?>" required></div>
+            <div class="mb-3"><label class="form-label">L/P:</label>
                 <select name="jenis_kelamin" class="form-control" required>
                     <option value="L" <?= $edit['jenis_kelamin'] == 'L' ? 'selected' : ''; ?>>Laki-laki</option>
                     <option value="P" <?= $edit['jenis_kelamin'] == 'P' ? 'selected' : ''; ?>>Perempuan</option>
                 </select>
             </div>
-            <div class="mb-3"><label class="form-label">Tanggal Lahir:</label><input type="date" name="tanggal_lahir" class="form-control" value="<?= htmlspecialchars($edit['tanggal_lahir']); ?>"></div>
+            <div class="mb-3"><label class="form-label">Tgl Lahir:</label><input type="date" name="tanggal_lahir" class="form-control" value="<?= htmlspecialchars($edit['tanggal_lahir']); ?>"></div>
             <div class="mb-3"><label class="form-label">Alamat:</label><textarea name="alamat" class="form-control" rows="2"><?= htmlspecialchars($edit['alamat']); ?></textarea></div>
-            <div class="mb-3"><label class="form-label">Status Aktif:</label><input type="number" name="status_aktif" class="form-control" min="0" max="1" value="<?= htmlspecialchars($edit['status_aktif']); ?>" required></div>
+            <div class="mb-3"><label class="form-label">Status:</label>
+                <select name="status_aktif" class="form-control" required>
+                    <option value="Aktif" <?= ($edit['status_aktif'] == 'Aktif' || $edit['status_aktif'] == '1') ? 'selected' : ''; ?>>Aktif</option>
+                    <option value="Tidak Aktif" <?= ($edit['status_aktif'] == 'Tidak Aktif' || $edit['status_aktif'] == '0') ? 'selected' : ''; ?>>Tidak Aktif</option>
+                </select>
+            </div>
         </div>
         <div class="modal-footer"><a href="kelola_siswa.php" class="btn btn-secondary">Batal</a><button type="submit" name="simpan" class="btn btn-primary">Simpan</button></div>
       </form></div>

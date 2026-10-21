@@ -12,7 +12,7 @@ $role = $_SESSION['role'] ?? 'admin';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; z-index: 100; }
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
@@ -57,26 +57,30 @@ $role = $_SESSION['role'] ?? 'admin';
         <hr>
 
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm text-center p-4">
+            <!-- Kolom Kiri: Foto & Identitas Singkat -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm text-center p-4 h-100">
                     <div class="mb-3">
-                        <!-- Placeholder foto profil, ganti path gambar jika ada -->
-                        <img src="https://ui-avatars.com/api/?name=Junita+Putri+Nur+Rahman&background=0d6efd&color=fff&size=150" alt="Foto Profil" class="profile-img mx-auto">
+                        <!-- Menggunakan file potoku.webp -->
+                        <img src="potoku.webp" alt="Foto Profil" class="profile-img mx-auto">
                     </div>
                     <h4>Junita Putri Nur Rahman</h4>
                     <p class="text-muted mb-1">XII RPL 2</p>
-                    <span class="badge bg-primary">Software Engineering</span>
+                    <div>
+                        <span class="badge bg-primary">Software Engineering</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-8">
-                <div class="card shadow-sm">
+            <!-- Kolom Kanan: Detail Profil / Tabel -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Profil Singkat</h4>
                         <table class="table table-borderless align-middle">
                             <tr>
-                                <th width="35%">Nama Lengkap</th>
-                                <td>: Junita Putri Nur Rahman</td>
+                                <th style="width: 30%;">Nama Lengkap</th>
+                                <td style="width: 70%;">: Junita Putri Nur Rahman</td>
                             </tr>
                             <tr>
                                 <th>Kelas / Jurusan</th>
@@ -84,7 +88,7 @@ $role = $_SESSION['role'] ?? 'admin';
                             </tr>
                             <tr>
                                 <th>Sekolah</th>
-                                <td>: SMK Muhammadiyah</td>
+                               <td>: SMK Muhammadiyah</td>
                             </tr>
                             <tr>
                                 <th>Fokus Keahlian</th>
