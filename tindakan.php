@@ -71,60 +71,63 @@ $no = $offset + 1;
                 </div>
             </div>
 
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark text-center">
-                    <tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Pelanggaran</th><th>Poin</th><th>Pelapor</th><th>Status</th><th>Aksi</th></tr>
-                </thead>
-                <tbody>
-                    <?php while($r = mysqli_fetch_assoc($data)): 
-                        $bg = $r['status'] == 'Selesai' ? 'success' : ($r['status'] == 'Diproses' ? 'warning' : 'secondary');
-                    ?>
-                    <tr>
-                        <td class="text-center"><?= $no++; ?></td>
-                        <td class="text-center"><?= $r['tanggal']; ?></td>
-                        <td><?= $r['nama_siswa']; ?></td>
-                        <td><?= $r['nama_kelas']; ?></td>
-                        <td><?= $r['nama_pelanggaran']; ?></td>
-                        <td class="text-center"><strong><?= $r['poin']; ?></strong></td>
-                        <td><?= $r['nama_guru']; ?></td>
-                        <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= $r['status']; ?></span></td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#m<?= $r['id']; ?>">Proses</button>
-                        </td>
-                    </tr>
+            <!-- Pembungkus table-responsive agar lebar tabel pas dan responsif di dalam card -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark text-center">
+                        <tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Pelanggaran</th><th>Poin</th><th>Pelapor</th><th>Status</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody>
+                        <?php while($r = mysqli_fetch_assoc($data)): 
+                            $bg = $r['status'] == 'Selesai' ? 'success' : ($r['status'] == 'Diproses' ? 'warning' : 'secondary');
+                        ?>
+                        <tr>
+                            <td class="text-center"><?= $no++; ?></td>
+                            <td class="text-center"><?= htmlspecialchars($r['tanggal']); ?></td>
+                            <td><?= htmlspecialchars($r['nama_siswa']); ?></td>
+                            <td><?= htmlspecialchars($r['nama_kelas']); ?></td>
+                            <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
+                            <td class="text-center"><strong><?= htmlspecialchars($r['poin']); ?></strong></td>
+                            <td><?= htmlspecialchars($r['nama_guru']); ?></td>
+                            <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= htmlspecialchars($r['status']); ?></span></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#m<?= $r['id']; ?>">Proses</button>
+                            </td>
+                        </tr>
 
-                    <div class="modal fade" id="m<?= $r['id']; ?>" tabindex="-1">
-                        <div class="modal-dialog"><div class="modal-content">
-                            <form method="POST">
-                                <div class="modal-header"><h5 class="modal-title">Ubah Status Tindakan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="id" value="<?= $r['id']; ?>">
-                                    <p>Siswa: <strong><?= $r['nama_siswa']; ?></strong></p>
-                                    <p>Pelanggaran: <strong><?= $r['nama_pelanggaran']; ?></strong></p>
-                                    <div class="mb-3">
-                                        <label class="form-label">Status Penanganan:</label>
-                                        <select name="status" class="form-control" required>
-                                            <option value="Pending" <?= $r['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
-                                            <option value="Diproses" <?= $r['status'] == 'Diproses' ? 'selected' : ''; ?>>Diproses</option>
-                                            <option value="Selesai" <?= $r['status'] == 'Selesai' ? 'selected' : ''; ?>>Selesai</option>
-                                        </select>
+                        <div class="modal fade" id="m<?= $r['id']; ?>" tabindex="-1">
+                            <div class="modal-dialog"><div class="modal-content">
+                                <form method="POST">
+                                    <div class="modal-header"><h5 class="modal-title">Ubah Status Tindakan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" value="<?= $r['id']; ?>">
+                                        <p>Siswa: <strong><?= htmlspecialchars($r['nama_siswa']); ?></strong></p>
+                                        <p>Pelanggaran: <strong><?= htmlspecialchars($r['nama_pelanggaran']); ?></strong></p>
+                                        <div class="mb-3">
+                                            <label class="form-label">Status Penanganan:</label>
+                                            <select name="status" class="form-control" required>
+                                                <option value="Pending" <?= $r['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                                <option value="Diproses" <?= $r['status'] == 'Diproses' ? 'selected' : ''; ?>>Diproses</option>
+                                                <option value="Selesai" <?= $r['status'] == 'Selesai' ? 'selected' : ''; ?>>Selesai</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" name="update_status" class="btn btn-success">Simpan</button>
-                                </div>
-                            </form>
-                        </div></div>
-                    </div>
-                    <?php endwhile; if(!$total): ?>
-                    <tr><td colspan="9" class="text-center text-muted">Belum ada data tindakan.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" name="update_status" class="btn btn-success">Simpan</button>
+                                    </div>
+                                </form>
+                            </div></div>
+                        </div>
+                        <?php endwhile; if(!$total): ?>
+                        <tr><td colspan="9" class="text-center text-muted">Belum ada data tindakan.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> - <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
+                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                 <ul class="pagination pagination-sm mb-0">
                     <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
                     <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>

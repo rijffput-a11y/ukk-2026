@@ -2,6 +2,7 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
+// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $sid = $_POST['siswa_id'];
@@ -9,19 +10,23 @@ if (isset($_POST['simpan'])) {
     $tid = $_POST['tahun_ajaran_id'];
     
     if ($id) {
-        mysqli_query($koneksi, "UPDATE t_kelas_siswa SET siswa_id='$sid', kelas_id='$kid', tahun_ajaran_id='$tid' WHERE id='$id'");
+        mysqli_query($koneksi, "UPDATE t_kelas_siswa SET siswa_id='$sid', kelas_id='$kid', tahun_ajaran_id='$tid', updated_at=NOW() WHERE id='$id'");
     } else {
-        mysqli_query($koneksi, "INSERT INTO t_kelas_siswa (siswa_id, kelas_id, tahun_ajaran_id) VALUES ('$sid', '$kid', '$tid')");
+        mysqli_query($koneksi, "INSERT INTO t_kelas_siswa (siswa_id, kelas_id, tahun_ajaran_id, created_at, updated_at) VALUES ('$sid', '$kid', '$tid', NOW(), NOW())");
     }
     header("Location: penempatan_siswa.php"); exit();
 }
 
+// 2. PROSES HAPUS
 if (isset($_GET['hapus'])) {
-    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE id='{$_GET['hapus']}'");
+    $id_penempatan = $_GET['hapus'];
+    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE id='$id_penempatan'");
     header("Location: penempatan_siswa.php"); exit();
 }
 
-$edit = isset($_GET['edit']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_kelas_siswa WHERE id='{$_GET['edit']}'")) : ['id'=>'','siswa_id'=>'','kelas_id'=>'','tahun_ajaran_id'=>''];
+$aksi = $_GET['aksi'] ?? '';
+$edit_id = $_GET['edit'] ?? '';
+$edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_kelas_siswa WHERE id='$edit_id'")) : null;
 
 $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
@@ -34,9 +39,9 @@ $pages = ceil($total / $limit);
 $data = mysqli_query($koneksi, "SELECT tks.*, ts.nama AS nama_siswa, tk.nama AS nama_kelas, ta.nama AS tahun_ajaran FROM t_kelas_siswa tks JOIN t_siswa ts ON tks.siswa_id=ts.id JOIN t_kelas tk ON tks.kelas_id=tk.id JOIN t_tahun_ajaran ta ON tks.tahun_ajaran_id=ta.id $where LIMIT $offset, $limit");
 $no = $offset + 1;
 
-$opt_siswa = mysqli_query($koneksi, "SELECT * FROM t_siswa");
-$opt_kelas = mysqli_query($koneksi, "SELECT * FROM t_kelas");
-$opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran");
+$opt_siswa = mysqli_query($koneksi, "SELECT * FROM t_siswa WHERE status_aktif=1 ORDER BY nama ASC");
+$opt_kelas = mysqli_query($koneksi, "SELECT * FROM t_kelas WHERE status_aktif=1 ORDER BY nama ASC");
+$opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_aktif=1 ORDER BY nama DESC");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -71,97 +76,116 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran");
     </div>
 
     <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2>Penempatan Siswa</h2>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalPenempatan">+ Tambah</button>
-        </div>
-        <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
+        <?php if ($aksi === 'tambah' || $edit): ?>
+            <!-- ================= FORM HALAMAN PENUH ================= -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2><?= $edit ? 'Edit Penempatan Siswa' : 'Tambah Penempatan Siswa'; ?></h2>
+                <a href="penempatan_siswa.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
+            </div>
+            <hr>
 
-        <div class="card shadow-sm"><div class="card-body">
-            <div class="row mb-3 justify-content-between">
-                <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>
-                <div class="col-auto">
-                    <form method="GET" class="d-flex align-items-center">
-                        <label class="me-2 mb-0 fw-bold">Cari:</label>
-                        <input type="text" name="cari" class="form-control form-control-sm" value="<?= htmlspecialchars($cari); ?>">
-                    </form>
+            <div class="card shadow-sm"><div class="card-body">
+                <form method="POST">
+                    <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Siswa:</label>
+                        <select name="siswa_id" class="form-control" required>
+                            <option value="">-- Pilih Siswa --</option>
+                            <?php mysqli_data_seek($opt_siswa, 0); while($s = mysqli_fetch_assoc($opt_siswa)): ?>
+                                <option value="<?= $s['id']; ?>" <?= (($edit['siswa_id'] ?? '') == $s['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($s['nama']); ?></option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Kelas:</label>
+                        <select name="kelas_id" class="form-control" required>
+                            <option value="">-- Pilih Kelas --</option>
+                            <?php mysqli_data_seek($opt_kelas, 0); while($k = mysqli_fetch_assoc($opt_kelas)): ?>
+                                <option value="<?= $k['id']; ?>" <?= (($edit['kelas_id'] ?? '') == $k['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($k['nama']); ?></option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Tahun Ajaran:</label>
+                        <select name="tahun_ajaran_id" class="form-control" required>
+                            <option value="">-- Pilih Tahun Ajaran --</option>
+                            <?php mysqli_data_seek($opt_ta, 0); while($t = mysqli_fetch_assoc($opt_ta)): ?>
+                                <option value="<?= $t['id']; ?>" <?= (($edit['tahun_ajaran_id'] ?? '') == $t['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($t['nama']); ?></option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+
+                    <hr>
+                    <div class="d-flex justify-content-end">
+                        <a href="penempatan_siswa.php" class="btn btn-secondary me-2">Batal</a>
+                        <button type="submit" name="simpan" class="btn btn-primary">Simpan Penempatan</button>
+                    </div>
+                </form>
+            </div></div>
+
+        <?php else: ?>
+            <!-- ================= TABEL UTAMA ================= -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>Penempatan Siswa</h2>
+                <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
+            </div>
+            <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
+
+            <div class="card shadow-sm"><div class="card-body">
+                <div class="row mb-3 justify-content-between">
+                    <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>
+                    <div class="col-auto">
+                        <form method="GET" class="d-flex align-items-center">
+                            <label class="me-2 mb-0 fw-bold">Cari:</label>
+                            <input type="text" name="cari" class="form-control form-control-sm" value="<?= htmlspecialchars($cari); ?>">
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
-                    <tr><th>No</th><th>Nama Siswa</th><th>Kelas</th><th>Tahun Ajaran</th><th class="text-center">Aksi</th></tr>
-                </thead>
-                <tbody>
-                    <?php while($r = mysqli_fetch_assoc($data)): ?>
-                    <tr>
-                        <td><?= $no++; ?></td>
-                        <td><?= htmlspecialchars($r['nama_siswa']); ?></td>
-                        <td><?= htmlspecialchars($r['nama_kelas']); ?></td>
-                        <td><?= htmlspecialchars($r['tahun_ajaran']); ?></td>
-                        <td class="text-center">
-                            <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
-                        </td>
-                    </tr>
-                    <?php endwhile; if(!$total): ?>
-                    <tr><td colspan="5" class="text-center text-muted">Data penempatan siswa tidak ditemukan.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr><th>No</th><th>Nama Siswa</th><th>Kelas</th><th>Tahun Ajaran</th><th class="text-center">Aksi</th></tr>
+                        </thead>
+                        <tbody>
+                            <?php while($r = mysqli_fetch_assoc($data)): ?>
+                            <tr>
+                                <td><?= $no++; ?></td>
+                                <td><?= htmlspecialchars($r['nama_siswa']); ?></td>
+                                <td><?= htmlspecialchars($r['nama_kelas']); ?></td>
+                                <td><?= htmlspecialchars($r['tahun_ajaran']); ?></td>
+                                <td class="text-center">
+                                    <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus data penempatan siswa ini?')">Hapus</a>
+                                </td>
+                            </tr>
+                            <?php endwhile; if(!$total): ?>
+                            <tr><td colspan="5" class="text-center text-muted">Data penempatan siswa tidak ditemukan.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> - <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
-                    <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
-                    <?php for($i=1; $i<=$pages; $i++): ?>
-                        <li class="page-item <?= $h == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
-                    <?php endfor; ?>
-                    <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h+1; ?>&cari=<?= $cari; ?>">Berikutnya</a></li>
-                    <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $pages; ?>&cari=<?= $cari; ?>">Terakhir</a></li>
-                </ul>
-            </div>
-        </div></div>
-    </div>
-
-    <div class="modal fade" id="modalPenempatan" tabindex="-1">
-      <div class="modal-dialog"><form method="POST" class="modal-content">
-        <div class="modal-header"><h5 class="modal-title"><?= $edit['id'] ? 'Edit' : 'Tambah'; ?> Penempatan Siswa</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-            <input type="hidden" name="id" value="<?= $edit['id']; ?>">
-            <div class="mb-3"><label class="form-label">Siswa:</label>
-                <select name="siswa_id" class="form-control" required>
-                    <option value="">-- Pilih Siswa --</option>
-                    <?php mysqli_data_seek($opt_siswa, 0); while($s = mysqli_fetch_assoc($opt_siswa)): ?>
-                        <option value="<?= $s['id']; ?>" <?= $edit['siswa_id'] == $s['id'] ? 'selected' : ''; ?>><?= htmlspecialchars($s['nama']); ?></option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-            <div class="mb-3"><label class="form-label">Kelas:</label>
-                <select name="kelas_id" class="form-control" required>
-                    <option value="">-- Pilih Kelas --</option>
-                    <?php mysqli_data_seek($opt_kelas, 0); while($k = mysqli_fetch_assoc($opt_kelas)): ?>
-                        <option value="<?= $k['id']; ?>" <?= $edit['kelas_id'] == $k['id'] ? 'selected' : ''; ?>><?= htmlspecialchars($k['nama']); ?></option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-            <div class="mb-3"><label class="form-label">Tahun Ajaran:</label>
-                <select name="tahun_ajaran_id" class="form-control" required>
-                    <option value="">-- Pilih Tahun Ajaran --</option>
-                    <?php mysqli_data_seek($opt_ta, 0); while($t = mysqli_fetch_assoc($opt_ta)): ?>
-                        <option value="<?= $t['id']; ?>" <?= $edit['tahun_ajaran_id'] == $t['id'] ? 'selected' : ''; ?>><?= htmlspecialchars($t['nama']); ?></option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-        </div>
-        <div class="modal-footer"><a href="penempatan_siswa.php" class="btn btn-secondary">Batal</a><button type="submit" name="simpan" class="btn btn-primary">Simpan</button></div>
-      </form></div>
+                <!-- PAGINATION -->
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
+                        <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
+                        <?php for($i=1; $i<=$pages; $i++): ?>
+                            <li class="page-item <?= $h == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
+                        <?php endfor; ?>
+                        <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h+1; ?>&cari=<?= $cari; ?>">Berikutnya</a></li>
+                        <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $pages; ?>&cari=<?= $cari; ?>">Terakhir</a></li>
+                    </ul>
+                </div>
+            </div></div>
+        <?php endif; ?>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<?php if(isset($_GET['edit'])): ?>
-<script>new bootstrap.Modal(document.getElementById('modalPenempatan')).show();</script>
-<?php endif; ?>
 </body>
 </html>
