@@ -64,14 +64,14 @@ $no = $offset + 1;
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
-            <li class="nav-item mb-1"><a href="kelola_siswa.php" class="active">Kelola Siswa</a></li>
+            <li class="nav-item mb-1"><a href="kelola_siswa.php"  class="active" >Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
             <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
@@ -134,7 +134,7 @@ $no = $offset + 1;
                 <h2>Kelola Siswa</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
             </div>
-            <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
+            <hr>
             <div class="card shadow-sm"><div class="card-body">
                 <div class="row mb-3 justify-content-between">
                     <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>

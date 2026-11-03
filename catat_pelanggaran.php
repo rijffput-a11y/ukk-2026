@@ -35,7 +35,7 @@ $opt_p = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran WHERE status_aktif=
     </div>
     <div class="main-content">
         <h2>Catat Pelanggaran</h2>
-        <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
+        <hr>
 
         <div class="card shadow-sm"><div class="card-body">
             <form method="POST">

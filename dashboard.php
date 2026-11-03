@@ -34,16 +34,16 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1"><a href="dashboard.php" class="active">Dashboard</a></li>
             <?php if ($role === 'admin'): ?>
-                <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
-                <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
-                <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
-                <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
-                <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
-                <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
-                <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
-                <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
+            <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
+            <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
+            <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
+            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
+            <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
+            <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
+            <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
+            <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
             <?php endif; ?>
 
             <?php if ($role === 'guru'): ?>

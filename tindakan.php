@@ -58,7 +58,7 @@ $no = $offset + 1;
 
     <div class="main-content">
         <h2>Tindakan & Penanganan Pelanggaran</h2>
-        <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
+        <hr>
 
         <div class="card shadow-sm"><div class="card-body">
             <div class="row mb-3 justify-content-between">

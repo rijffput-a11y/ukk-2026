@@ -30,7 +30,7 @@ $edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_ke
 
 $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
-$offset = ($h - 1) * $limit;
+$offset = ($h - 1) * $limit; // Diperbaiki dari typo sebelumnya
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE ts.nama LIKE '%$cari%' OR tk.nama LIKE '%$cari%' OR ta.nama LIKE '%$cari%'" : "";
 
@@ -65,11 +65,11 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
-            <li class="nav-item mb-1"><a href="penempatan_siswa.php" class="active">Penempatan Siswa</a></li>
+            <li class="nav-item mb-1"><a href="penempatan_siswa.php" class="active" >Penempatan Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
             <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
@@ -132,8 +132,7 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
                 <h2>Penempatan Siswa</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
             </div>
-            <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
-
+            <hr>
             <div class="card shadow-sm"><div class="card-body">
                 <div class="row mb-3 justify-content-between">
                     <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>

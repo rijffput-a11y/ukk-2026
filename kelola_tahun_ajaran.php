@@ -2,13 +2,17 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
+// 1. PROSES SIMPAN (TAMBAH / EDIT DENGAN STATUS OTOMATIS BERDASARKAN TAHUN)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $tgl_mulai = $_POST['tanggal_mulai'];
     $tgl_selesai = $_POST['tanggal_selesai'];
-    $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
+    
+    // Otomatis menentukan status aktif berdasarkan tahun berjalan
+    $tahun_sekarang = date('Y'); // Mengambil tahun saat ini (2026)
+    $cek_tahun = explode('/', $nama);
+    $status = (in_array($tahun_sekarang, $cek_tahun) || (date('Y-m-d') >= $tgl_mulai && date('Y-m-d') <= $tgl_selesai)) ? 1 : 0;
     
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_tahun_ajaran SET nama='$nama', tanggal_mulai='$tgl_mulai', tanggal_selesai='$tgl_selesai', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
@@ -64,12 +68,12 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
-            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php" class="active">Kelola Tahun Ajaran</a></li>
+            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php" class="active" >Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
             <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
@@ -90,7 +94,8 @@ $no = $offset + 1;
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tahun Ajaran:</label>
-                        <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" placeholder="Contoh: 2026/2027" required>
+                        <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" placeholder="Contoh: 2027/2028" required>
+                        <small class="text-muted">Status aktif akan menyesuaikan secara otomatis dengan tahun sistem.</small>
                     </div>
 
                     <div class="mb-3">
@@ -101,14 +106,6 @@ $no = $offset + 1;
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tanggal Selesai:</label>
                         <input type="date" name="tanggal_selesai" class="form-control" value="<?= htmlspecialchars($edit['tanggal_selesai'] ?? ''); ?>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Status Aktif:</label>
-                        <select name="status_aktif" class="form-control" required>
-                            <option value="Aktif" <?= (($edit['status_aktif'] ?? 1) == 1 || ($edit['status_aktif'] ?? '') == 'Aktif') ? 'selected' : ''; ?>>Aktif</option>
-                            <option value="Tidak Aktif" <?= (($edit['status_aktif'] ?? 1) == 0 || ($edit['status_aktif'] ?? '') == 'Tidak Aktif') ? 'selected' : ''; ?>>Tidak Aktif</option>
-                        </select>
                     </div>
 
                     <hr>
@@ -125,8 +122,7 @@ $no = $offset + 1;
                 <h2>Kelola Tahun Ajaran</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
             </div>
-            <a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr>
-
+            <hr>
             <div class="card shadow-sm"><div class="card-body">
                 <div class="row mb-3 justify-content-between">
                     <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>

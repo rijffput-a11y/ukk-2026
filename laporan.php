@@ -42,24 +42,25 @@ $no = $offset + 1;
     <div class="sidebar d-flex flex-column p-3 no-print">
         <h4 class="text-white mb-4">Pelanggaran Siswa</h4>
         <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
-                <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
-                <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
-                <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
-                <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
-                <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
-                <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
-                <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="laporan.php" class="active">laporan</a></li>
-                <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
+            <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
+            <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
+            <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
+            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
+            <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
+            <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
+            <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="laporan.php" class="active">laporan</a></li>
+            <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
             </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
     </div>
 
     <div class="main-content">
         <h2>Laporan Pelanggaran Siswa</h2>
-        <div class="no-print"><a href="dashboard.php">Dashboard</a> | <a href="logout.php">Logout</a><hr></div>
+        <div class="no-print"></div>
+        <hr>
 
         <div class="card shadow-sm mb-4 no-print"><div class="card-body">
             <form method="GET" class="row g-3">
