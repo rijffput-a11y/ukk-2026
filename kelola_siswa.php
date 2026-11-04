@@ -71,7 +71,7 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
             <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
-            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
+            <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>

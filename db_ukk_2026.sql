@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 03 Nov 2026 pada 06.35
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Waktu pembuatan: 04 Nov 2026 pada 04.46
+-- Versi server: 10.4.27-MariaDB
+-- Versi PHP: 8.0.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -182,32 +182,32 @@ CREATE TABLE `t_kelas_siswa` (
 --
 
 INSERT INTO `t_kelas_siswa` (`id`, `siswa_id`, `tahun_ajaran_id`, `kelas_id`, `tanggal_mulai`, `tanggal_selesai`, `status_aktif`, `created_at`, `updated_at`) VALUES
-(53, 1, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(54, 2, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(55, 3, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(56, 4, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(57, 5, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(58, 6, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(59, 7, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(60, 8, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(61, 9, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(62, 10, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(63, 11, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(64, 12, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(65, 13, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(66, 14, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(67, 15, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(68, 16, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(69, 17, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(70, 18, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(71, 19, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(72, 20, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(73, 21, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(74, 22, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(75, 23, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(76, 24, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(77, 25, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14'),
-(78, 26, 2, 33, '2026-07-15', '2027-06-20', 1, '2026-11-03 05:20:14', '2026-11-03 05:20:14');
+(1, 1, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(2, 2, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(3, 3, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(4, 4, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(5, 5, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(6, 6, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(7, 7, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(8, 8, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(9, 9, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(10, 10, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(11, 11, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(12, 12, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(13, 13, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(14, 14, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(15, 15, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(16, 16, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(17, 17, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(18, 18, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(19, 19, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(20, 20, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(21, 21, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(22, 22, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(23, 23, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(24, 24, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(25, 25, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24'),
+(26, 26, 1, 33, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:43:24', '2026-11-04 02:43:24');
 
 -- --------------------------------------------------------
 
@@ -232,56 +232,21 @@ CREATE TABLE `t_pelanggaran` (
 --
 
 INSERT INTO `t_pelanggaran` (`id`, `pelanggaran_kategori_id`, `kode`, `nama`, `poin`, `deskripsi`, `status_aktif`, `created_at`, `updated_at`) VALUES
-(1, 12, 'PLG-001', 'Terlambat Masuk Sekolah (Tipe 1)', 10, 'Deskripsi detail pelanggaran Terlambat Masuk Sekolah (Tipe 1)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(2, 41, 'PLG-002', 'Tidak Pakai Seragam Sesuai Jadwal (Tipe 2)', 20, 'Deskripsi detail pelanggaran Tidak Pakai Seragam Sesuai Jadwal (Tipe 2)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(3, 18, 'PLG-003', 'Rambut Panjang / Tidak Rapi (Tipe 3)', 15, 'Deskripsi detail pelanggaran Rambut Panjang / Tidak Rapi (Tipe 3)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(4, 9, 'PLG-004', 'Membawa HP saat Pelajaran Tanpa Izin (Tipe 4)', 30, 'Deskripsi detail pelanggaran Membawa HP saat Pelajaran Tanpa Izin (Tipe 4)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(5, 34, 'PLG-005', 'Atribut Seragam Tidak Lengkap (Tipe 5)', 25, 'Deskripsi detail pelanggaran Atribut Seragam Tidak Lengkap (Tipe 5)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(6, 11, 'PLG-006', 'Membawa Rokok / Merokok (Tipe 6)', 55, 'Deskripsi detail pelanggaran Membawa Rokok / Merokok (Tipe 6)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(7, 3, 'PLG-007', 'Mebolos Sekolah / Cabut (Tipe 7)', 35, 'Deskripsi detail pelanggaran Mebolos Sekolah / Cabut (Tipe 7)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(8, 22, 'PLG-008', 'Membuat Kegaduhan di Kelas (Tipe 8)', 25, 'Deskripsi detail pelanggaran Membuat Kegaduhan di Kelas (Tipe 8)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(9, 39, 'PLG-009', 'Mencoret Dinding / Meja (Tipe 9)', 35, 'Deskripsi detail pelanggaran Mencoret Dinding / Meja (Tipe 9)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(10, 5, 'PLG-010', 'Tawuran (Tipe 10)', 100, 'Deskripsi detail pelanggaran Tawuran (Tipe 10)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(11, 44, 'PLG-011', 'Terlambat Masuk Sekolah (Tipe 11)', 10, 'Deskripsi detail pelanggaran Terlambat Masuk Sekolah (Tipe 11)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(12, 18, 'PLG-012', 'Tidak Pakai Seragam Sesuai Jadwal (Tipe 12)', 20, 'Deskripsi detail pelanggaran Tidak Pakai Seragam Sesuai Jadwal (Tipe 12)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(13, 27, 'PLG-013', 'Rambut Panjang / Tidak Rapi (Tipe 13)', 15, 'Deskripsi detail pelanggaran Rambut Panjang / Tidak Rapi (Tipe 13)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(14, 48, 'PLG-014', 'Membawa HP saat Pelajaran Tanpa Izin (Tipe 14)', 30, 'Deskripsi detail pelanggaran Membawa HP saat Pelajaran Tanpa Izin (Tipe 14)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(15, 30, 'PLG-015', 'Atribut Seragam Tidak Lengkap (Tipe 15)', 25, 'Deskripsi detail pelanggaran Atribut Seragam Tidak Lengkap (Tipe 15)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(16, 2, 'PLG-016', 'Membawa Rokok / Merokok (Tipe 16)', 55, 'Deskripsi detail pelanggaran Membawa Rokok / Merokok (Tipe 16)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(17, 37, 'PLG-017', 'Mebolos Sekolah / Cabut (Tipe 17)', 35, 'Deskripsi detail pelanggaran Mebolos Sekolah / Cabut (Tipe 17)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(18, 14, 'PLG-018', 'Membuat Kegaduhan di Kelas (Tipe 18)', 25, 'Deskripsi detail pelanggaran Membuat Kegaduhan di Kelas (Tipe 18)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(19, 29, 'PLG-019', 'Mencoret Dinding / Meja (Tipe 19)', 35, 'Deskripsi detail pelanggaran Mencoret Dinding / Meja (Tipe 19)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(20, 1, 'PLG-020', 'Tawuran (Tipe 20)', 100, 'Deskripsi detail pelanggaran Tawuran (Tipe 20)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(21, 15, 'PLG-021', 'Terlambat Masuk Sekolah (Tipe 21)', 10, 'Deskripsi detail pelanggaran Terlambat Masuk Sekolah (Tipe 21)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(22, 19, 'PLG-022', 'Tidak Pakai Seragam Sesuai Jadwal (Tipe 22)', 20, 'Deskripsi detail pelanggaran Tidak Pakai Seragam Sesuai Jadwal (Tipe 22)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(23, 21, 'PLG-023', 'Rambut Panjang / Tidak Rapi (Tipe 23)', 15, 'Deskripsi detail pelanggaran Rambut Panjang / Tidak Rapi (Tipe 23)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(24, 2, 'PLG-024', 'Membawa HP saat Pelajaran Tanpa Izin (Tipe 24)', 30, 'Deskripsi detail pelanggaran Membawa HP saat Pelajaran Tanpa Izin (Tipe 24)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(25, 4, 'PLG-025', 'Atribut Seragam Tidak Lengkap (Tipe 25)', 25, 'Deskripsi detail pelanggaran Atribut Seragam Tidak Lengkap (Tipe 25)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(26, 42, 'PLG-026', 'Membawa Rokok / Merokok (Tipe 26)', 55, 'Deskripsi detail pelanggaran Membawa Rokok / Merokok (Tipe 26)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(27, 26, 'PLG-027', 'Mebolos Sekolah / Cabut (Tipe 27)', 35, 'Deskripsi detail pelanggaran Mebolos Sekolah / Cabut (Tipe 27)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(28, 47, 'PLG-028', 'Membuat Kegaduhan di Kelas (Tipe 28)', 25, 'Deskripsi detail pelanggaran Membuat Kegaduhan di Kelas (Tipe 28)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(29, 33, 'PLG-029', 'Mencoret Dinding / Meja (Tipe 29)', 35, 'Deskripsi detail pelanggaran Mencoret Dinding / Meja (Tipe 29)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(30, 25, 'PLG-030', 'Tawuran (Tipe 30)', 100, 'Deskripsi detail pelanggaran Tawuran (Tipe 30)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(31, 38, 'PLG-031', 'Terlambat Masuk Sekolah (Tipe 31)', 10, 'Deskripsi detail pelanggaran Terlambat Masuk Sekolah (Tipe 31)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(32, 17, 'PLG-032', 'Tidak Pakai Seragam Sesuai Jadwal (Tipe 32)', 20, 'Deskripsi detail pelanggaran Tidak Pakai Seragam Sesuai Jadwal (Tipe 32)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(33, 40, 'PLG-033', 'Rambut Panjang / Tidak Rapi (Tipe 33)', 15, 'Deskripsi detail pelanggaran Rambut Panjang / Tidak Rapi (Tipe 33)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(34, 16, 'PLG-034', 'Membawa HP saat Pelajaran Tanpa Izin (Tipe 34)', 30, 'Deskripsi detail pelanggaran Membawa HP saat Pelajaran Tanpa Izin (Tipe 34)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(35, 12, 'PLG-035', 'Atribut Seragam Tidak Lengkap (Tipe 35)', 25, 'Deskripsi detail pelanggaran Atribut Seragam Tidak Lengkap (Tipe 35)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(36, 28, 'PLG-036', 'Membawa Rokok / Merokok (Tipe 36)', 55, 'Deskripsi detail pelanggaran Membawa Rokok / Merokok (Tipe 36)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(37, 24, 'PLG-037', 'Mebolos Sekolah / Cabut (Tipe 37)', 35, 'Deskripsi detail pelanggaran Mebolos Sekolah / Cabut (Tipe 37)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(38, 20, 'PLG-038', 'Membuat Kegaduhan di Kelas (Tipe 38)', 25, 'Deskripsi detail pelanggaran Membuat Kegaduhan di Kelas (Tipe 38)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(39, 45, 'PLG-039', 'Mencoret Dinding / Meja (Tipe 39)', 35, 'Deskripsi detail pelanggaran Mencoret Dinding / Meja (Tipe 39)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(40, 10, 'PLG-040', 'Tawuran (Tipe 40)', 100, 'Deskripsi detail pelanggaran Tawuran (Tipe 40)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(41, 13, 'PLG-041', 'Terlambat Masuk Sekolah (Tipe 41)', 10, 'Deskripsi detail pelanggaran Terlambat Masuk Sekolah (Tipe 41)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(42, 6, 'PLG-042', 'Tidak Pakai Seragam Sesuai Jadwal (Tipe 42)', 20, 'Deskripsi detail pelanggaran Tidak Pakai Seragam Sesuai Jadwal (Tipe 42)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(43, 31, 'PLG-043', 'Rambut Panjang / Tidak Rapi (Tipe 43)', 15, 'Deskripsi detail pelanggaran Rambut Panjang / Tidak Rapi (Tipe 43)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(44, 49, 'PLG-044', 'Membawa HP saat Pelajaran Tanpa Izin (Tipe 44)', 30, 'Deskripsi detail pelanggaran Membawa HP saat Pelajaran Tanpa Izin (Tipe 44)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(45, 50, 'PLG-045', 'Atribut Seragam Tidak Lengkap (Tipe 45)', 25, 'Deskripsi detail pelanggaran Atribut Seragam Tidak Lengkap (Tipe 45)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(46, 7, 'PLG-046', 'Membawa Rokok / Merokok (Tipe 46)', 55, 'Deskripsi detail pelanggaran Membawa Rokok / Merokok (Tipe 46)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(47, 36, 'PLG-047', 'Mebolos Sekolah / Cabut (Tipe 47)', 35, 'Deskripsi detail pelanggaran Mebolos Sekolah / Cabut (Tipe 47)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(48, 23, 'PLG-048', 'Membuat Kegaduhan di Kelas (Tipe 48)', 25, 'Deskripsi detail pelanggaran Membuat Kegaduhan di Kelas (Tipe 48)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(49, 32, 'PLG-049', 'Mencoret Dinding / Meja (Tipe 49)', 35, 'Deskripsi detail pelanggaran Mencoret Dinding / Meja (Tipe 49)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(50, 43, 'PLG-050', 'Tawuran (Tipe 50)', 100, 'Deskripsi detail pelanggaran Tawuran (Tipe 50)', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56');
+(1, 1, 'PLG-001', 'Terlambat hadir di sekolah', 10, 'Datang melewati batas waktu gerbang sekolah ditutup', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(2, 1, 'PLG-002', 'Keluar kelas tanpa izin saat jam pelajaran', 15, 'Meninggalkan ruang kelas tanpa izin guru yang mengajar', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(3, 1, 'PLG-003', 'Tidak mengikuti upacara bendera', 20, 'Tidak hadir atau sengaja menghindar dari kegiatan upacara sekolah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(4, 2, 'PLG-004', 'Atribut seragam tidak lengkap', 10, 'Tidak memakai dasi, topi, lokasi, atau badge sesuai ketentuan hari tersebut', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(5, 2, 'PLG-005', 'Seragam tidak sesuai ketentuan / jadwal', 15, 'Memakai pakaian bebas atau seragam tidak sesuai jadwal harian', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(6, 2, 'PLG-006', 'Rambut panjang / dicat (khusus siswa laki-laki)', 15, 'Memelihara rambut panjang, tidak rapi, atau mewarnai rambut', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(7, 3, 'PLG-007', 'Membolos / cabut jam pelajaran', 25, 'Keluar lingkungan sekolah atau bersembunyi saat jam pelajaran berlangsung', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(8, 3, 'PLG-008', 'Alpha (Tidak masuk tanpa keterangan)', 20, 'Tidak hadir ke sekolah tanpa surat izin atau keterangan yang sah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(9, 4, 'PLG-009', 'Membuat kegaduhan / keributan di kelas', 20, 'Membuat suasana kelas menjadi gaduh dan mengganggu proses KBM', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(10, 4, 'PLG-010', 'Tidak sopan / berkata kasar kepada guru / staf', 30, 'Menggunakan bahasa atau gestur yang tidak sopan kepada warga sekolah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(11, 4, 'PLG-011', 'Mencoret-coret fasilitas sekolah (dinding/meja/kursi)', 25, 'Merusak estetika fasilitas kelas atau sekolah dengan coretan', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(12, 5, 'PLG-012', 'Membawa dan/atau merokok di lingkungan sekolah', 50, 'Kedapatan merokok atau membawa rokok di area sekolah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(13, 5, 'PLG-013', 'Membawa HP / Gadget saat pelajaran tanpa izin', 25, 'Menggunakan handphone di kelas tanpa instruksi atau izin guru pengampu', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(14, 5, 'PLG-014', 'Terlibat perkelahian / tawuran antar pelajar', 100, 'Melakukan kontak fisik kekerasan atau tawuran di dalam maupun luar sekolah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(15, 5, 'PLG-015', 'Membawa senjata tajam atau benda berbahaya', 100, 'Membawa senjata tajam, senjata api mainan berbahaya, atau alat pemukul', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26');
 
 -- --------------------------------------------------------
 
@@ -303,56 +268,11 @@ CREATE TABLE `t_pelanggaran_kategori` (
 --
 
 INSERT INTO `t_pelanggaran_kategori` (`id`, `nama`, `deskripsi`, `status_aktif`, `created_at`, `updated_at`) VALUES
-(1, 'Kedisiplinan Waktu - Tingkat 1', 'Kategori pelanggaran terkait kedisiplinan waktu - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(2, 'Kerapihan Berpakaian - Tingkat 1', 'Kategori pelanggaran terkait kerapihan berpakaian - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(3, 'Sikap dan Perilaku - Tingkat 1', 'Kategori pelanggaran terkait sikap dan perilaku - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(4, 'Kehadiran - Tingkat 1', 'Kategori pelanggaran terkait kehadiran - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(5, 'Ketertiban Belajar - Tingkat 1', 'Kategori pelanggaran terkait ketertiban belajar - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(6, 'Penggunaan Barang Terlarang - Tingkat 1', 'Kategori pelanggaran terkait penggunaan barang terlarang - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(7, 'Fasilitas Sekolah - Tingkat 1', 'Kategori pelanggaran terkait fasilitas sekolah - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(8, 'Kesusilaan - Tingkat 1', 'Kategori pelanggaran terkait kesusilaan - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(9, 'Kerajinan - Tingkat 1', 'Kategori pelanggaran terkait kerajinan - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(10, 'Lain-lain - Tingkat 1', 'Kategori pelanggaran terkait lain-lain - tingkat 1', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(11, 'Kedisiplinan Waktu - Tingkat 2', 'Kategori pelanggaran terkait kedisiplinan waktu - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(12, 'Kerapihan Berpakaian - Tingkat 2', 'Kategori pelanggaran terkait kerapihan berpakaian - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(13, 'Sikap dan Perilaku - Tingkat 2', 'Kategori pelanggaran terkait sikap dan perilaku - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(14, 'Kehadiran - Tingkat 2', 'Kategori pelanggaran terkait kehadiran - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(15, 'Ketertiban Belajar - Tingkat 2', 'Kategori pelanggaran terkait ketertiban belajar - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(16, 'Penggunaan Barang Terlarang - Tingkat 2', 'Kategori pelanggaran terkait penggunaan barang terlarang - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(17, 'Fasilitas Sekolah - Tingkat 2', 'Kategori pelanggaran terkait fasilitas sekolah - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(18, 'Kesusilaan - Tingkat 2', 'Kategori pelanggaran terkait kesusilaan - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(19, 'Kerajinan - Tingkat 2', 'Kategori pelanggaran terkait kerajinan - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(20, 'Lain-lain - Tingkat 2', 'Kategori pelanggaran terkait lain-lain - tingkat 2', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(21, 'Kedisiplinan Waktu - Tingkat 3', 'Kategori pelanggaran terkait kedisiplinan waktu - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(22, 'Kerapihan Berpakaian - Tingkat 3', 'Kategori pelanggaran terkait kerapihan berpakaian - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(23, 'Sikap dan Perilaku - Tingkat 3', 'Kategori pelanggaran terkait sikap dan perilaku - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(24, 'Kehadiran - Tingkat 3', 'Kategori pelanggaran terkait kehadiran - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(25, 'Ketertiban Belajar - Tingkat 3', 'Kategori pelanggaran terkait ketertiban belajar - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(26, 'Penggunaan Barang Terlarang - Tingkat 3', 'Kategori pelanggaran terkait penggunaan barang terlarang - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(27, 'Fasilitas Sekolah - Tingkat 3', 'Kategori pelanggaran terkait fasilitas sekolah - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(28, 'Kesusilaan - Tingkat 3', 'Kategori pelanggaran terkait kesusilaan - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(29, 'Kerajinan - Tingkat 3', 'Kategori pelanggaran terkait kerajinan - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(30, 'Lain-lain - Tingkat 3', 'Kategori pelanggaran terkait lain-lain - tingkat 3', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(31, 'Kedisiplinan Waktu - Tingkat 4', 'Kategori pelanggaran terkait kedisiplinan waktu - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(32, 'Kerapihan Berpakaian - Tingkat 4', 'Kategori pelanggaran terkait kerapihan berpakaian - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(33, 'Sikap dan Perilaku - Tingkat 4', 'Kategori pelanggaran terkait sikap dan perilaku - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(34, 'Kehadiran - Tingkat 4', 'Kategori pelanggaran terkait kehadiran - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(35, 'Ketertiban Belajar - Tingkat 4', 'Kategori pelanggaran terkait ketertiban belajar - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(36, 'Penggunaan Barang Terlarang - Tingkat 4', 'Kategori pelanggaran terkait penggunaan barang terlarang - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(37, 'Fasilitas Sekolah - Tingkat 4', 'Kategori pelanggaran terkait fasilitas sekolah - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(38, 'Kesusilaan - Tingkat 4', 'Kategori pelanggaran terkait kesusilaan - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(39, 'Kerajinan - Tingkat 4', 'Kategori pelanggaran terkait kerajinan - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(40, 'Lain-lain - Tingkat 4', 'Kategori pelanggaran terkait lain-lain - tingkat 4', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(41, 'Kedisiplinan Waktu - Tingkat 5', 'Kategori pelanggaran terkait kedisiplinan waktu - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(42, 'Kerapihan Berpakaian - Tingkat 5', 'Kategori pelanggaran terkait kerapihan berpakaian - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(43, 'Sikap dan Perilaku - Tingkat 5', 'Kategori pelanggaran terkait sikap dan perilaku - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(44, 'Kehadiran - Tingkat 5', 'Kategori pelanggaran terkait kehadiran - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(45, 'Ketertiban Belajar - Tingkat 5', 'Kategori pelanggaran terkait ketertiban belajar - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(46, 'Penggunaan Barang Terlarang - Tingkat 5', 'Kategori pelanggaran terkait penggunaan barang terlarang - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(47, 'Fasilitas Sekolah - Tingkat 5', 'Kategori pelanggaran terkait fasilitas sekolah - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(48, 'Kesusilaan - Tingkat 5', 'Kategori pelanggaran terkait kesusilaan - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(49, 'Kerajinan - Tingkat 5', 'Kategori pelanggaran terkait kerajinan - tingkat 5', 1, '2026-09-23 02:31:56', '2026-09-23 02:31:56'),
-(50, 'Lain-lain - Tingkat 5', 'Kategori pelanggaran terkait lain-lain - tingkat 5\r\n', 1, '2026-09-23 02:31:56', '2026-11-03 01:39:58');
+(1, 'Kedisiplinan', 'Pelanggaran terkait aturan waktu dan tata tertib umum sekolah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(2, 'Kerapihan Pakaian', 'Pelanggaran terkait kelengkapan atribut dan seragam sekolah', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(3, 'Kehadiran & Ketidakhadiran', 'Pelanggaran terkait absensi, membolos, dan jam pelajaran', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(4, 'Sikap & Perilaku', 'Pelanggaran terkait sopan santun, ketertiban kelas, dan etika', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26'),
+(5, 'Barang Terlarang & Tindak Kriminal', 'Pelanggaran berat terkait kepemilikan barang terlarang atau tindakan kekerasan', 1, '2026-11-04 00:54:26', '2026-11-04 00:54:26');
 
 -- --------------------------------------------------------
 
@@ -380,6 +300,13 @@ CREATE TABLE `t_pelanggaran_siswa` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `t_pelanggaran_siswa`
+--
+
+INSERT INTO `t_pelanggaran_siswa` (`id`, `tahun_ajaran_id`, `siswa_id`, `nama_siswa`, `kelas_id`, `nama_kelas`, `pelanggaran_id`, `nama_pelanggaran`, `pelanggaran_kategori_id`, `guru_id`, `nama_guru`, `tanggal`, `keterangan`, `poin`, `tindakan`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'JUNITA PUTRI NUR RAHMAN', 33, 'XII RPL 2', 1, 'Terlambat hadir di sekolah', 1, 32, 'Aldi Maulana, S.Pd', '2026-11-04', 'Terlambat masuk gerbang sekolah', 10, 'Peringatan lisan', 'Pending', '2026-11-04 02:46:52', '2026-11-04 02:46:52');
 
 -- --------------------------------------------------------
 
@@ -453,8 +380,8 @@ CREATE TABLE `t_tahun_ajaran` (
 --
 
 INSERT INTO `t_tahun_ajaran` (`id`, `nama`, `tanggal_mulai`, `tanggal_selesai`, `status_aktif`, `created_at`, `updated_at`) VALUES
-(2, '2026/2027', '2026-07-15', '2027-06-20', 1, '2026-11-03 04:57:29', '2026-11-03 05:02:23'),
-(53, '2027/2028', '2027-07-15', '2028-06-20', 0, '2026-11-03 05:02:56', '2026-11-03 05:02:56');
+(1, '2026/2027', '2026-07-15', '2027-06-20', 1, '2026-11-04 02:39:14', '2026-11-04 02:39:14'),
+(2, '2027/2028', '2027-07-15', '2028-06-20', 0, '2026-11-04 02:39:14', '2026-11-04 02:39:14');
 
 -- --------------------------------------------------------
 
@@ -559,7 +486,7 @@ CREATE TABLE `t_wali_kelas` (
 --
 
 INSERT INTO `t_wali_kelas` (`id`, `tahun_ajaran_id`, `kelas_id`, `guru_id`, `tanggal_mulai`, `tanggal_selesai`, `status_aktif`, `created_at`, `updated_at`) VALUES
-(52, 2, 33, 32, NULL, NULL, 1, '2026-11-03 05:12:25', '2026-11-03 05:12:25');
+(1, 1, 33, 32, '2026-07-15', '2027-06-20', 1, '2026-11-04 02:41:04', '2026-11-04 02:41:04');
 
 --
 -- Indexes for dumped tables
@@ -659,7 +586,7 @@ ALTER TABLE `t_kelas`
 -- AUTO_INCREMENT untuk tabel `t_kelas_siswa`
 --
 ALTER TABLE `t_kelas_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_pelanggaran`
@@ -677,7 +604,7 @@ ALTER TABLE `t_pelanggaran_kategori`
 -- AUTO_INCREMENT untuk tabel `t_pelanggaran_siswa`
 --
 ALTER TABLE `t_pelanggaran_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_siswa`
@@ -689,7 +616,7 @@ ALTER TABLE `t_siswa`
 -- AUTO_INCREMENT untuk tabel `t_tahun_ajaran`
 --
 ALTER TABLE `t_tahun_ajaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_users`
@@ -701,7 +628,7 @@ ALTER TABLE `t_users`
 -- AUTO_INCREMENT untuk tabel `t_wali_kelas`
 --
 ALTER TABLE `t_wali_kelas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

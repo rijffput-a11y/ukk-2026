@@ -1,11 +1,15 @@
 <?php
 require_once 'koneksi.php';
-if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
+if (!isset($_SESSION['user_id'])) { 
+    header("Location: login.php"); 
+    exit(); 
+}
 
 $role = $_SESSION['role'];
-$nama = $_SESSION['nama_user'];
+// Perbaikan penanganan session nama agar tidak undefined error
+$nama = isset($_SESSION['nama_user']) ? $_SESSION['nama_user'] : (isset($_SESSION['name']) ? $_SESSION['name'] : 'User');
 
-// Hitung total data otomatis dari database untuk card
+// Hitung total data otomatis dari database untuk card (khusus admin)
 $jml_siswa = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_siswa"))[0];
 $jml_guru  = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_guru"))[0];
 $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kelas"))[0];
@@ -33,17 +37,16 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
         <h4 class="text-white mb-4">Pelanggaran Siswa</h4>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1"><a href="dashboard.php" class="active">Dashboard</a></li>
+            
             <?php if ($role === 'admin'): ?>
-            <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
-            <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
-            <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
-            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
-            <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
-            <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
-            <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-            <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
-            <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
-            <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
+                <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
+                <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
+                <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
+                <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
+                <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
+                <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
+                <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
+                <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
             <?php endif; ?>
 
             <?php if ($role === 'guru'): ?>
@@ -51,8 +54,14 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
                 <li class="nav-item mb-1"><a href="tindakan.php">Tindakan</a></li>
                 <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
                 <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-                <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
             <?php endif; ?>
+
+            <!-- Menu Laporan: Tampil untuk Admin ATAU Guru yang berstatus Wali Kelas -->
+            <?php if ($role === 'admin' || (isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true)): ?>
+                <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
+            <?php endif; ?>
+
+            <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
     </div>
@@ -61,7 +70,11 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
     <div class="main-content">
         <div class="p-4 mb-4 bg-white rounded shadow-sm border-start border-primary border-4">
             <h2>Selamat Datang, <?= htmlspecialchars($nama); ?>! 👋</h2>
-            <p class="text-muted mb-0">Anda masuk sebagai akses: <span class="badge bg-primary text-uppercase"><?= htmlspecialchars($role); ?></span></p>
+            <p class="text-muted mb-0">Anda masuk sebagai akses: <span class="badge bg-primary text-uppercase"><?= htmlspecialchars($role); ?></span>
+            <?php if (isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true): ?>
+                <span class="badge bg-success ms-1">Wali Kelas</span>
+            <?php endif; ?>
+            </p>
         </div>
 
         <?php if ($role === 'admin'): ?>

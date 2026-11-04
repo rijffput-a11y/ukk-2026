@@ -4,6 +4,7 @@ if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 
 $nama_user = $_SESSION['nama_user'] ?? 'Junita Putri Nur Rahman';
 $role = $_SESSION['role'] ?? 'admin';
+$is_wali_kelas = isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -26,6 +27,7 @@ $role = $_SESSION['role'] ?? 'admin';
         <h4 class="text-white mb-4">Pelanggaran Siswa</h4>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
+            
             <?php if ($role === 'admin'): ?>
                 <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
                 <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
@@ -34,8 +36,8 @@ $role = $_SESSION['role'] ?? 'admin';
                 <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
                 <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
                 <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
-                <li class="nav-item mb-1"><a href="laporan.php">laporan</a></li>
                 <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
+                <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
                 <li class="nav-item mb-1"><a href="about_me.php" class="active">About Me</a></li>
             <?php endif; ?>
 
@@ -44,7 +46,13 @@ $role = $_SESSION['role'] ?? 'admin';
                 <li class="nav-item mb-1"><a href="tindakan.php">Tindakan</a></li>
                 <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
                 <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-                <li class="nav-item mb-1"><a href="about_me.php" >About Me</a></li>
+                
+                <!-- Menu Laporan HANYA MUNCUL jika guru tersebut adalah Wali Kelas -->
+                <?php if ($is_wali_kelas): ?>
+                    <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
+                <?php endif; ?>
+
+                <li class="nav-item mb-1"><a href="about_me.php" class="active">About Me</a></li>
             <?php endif; ?>
         </ul>
         <hr>
