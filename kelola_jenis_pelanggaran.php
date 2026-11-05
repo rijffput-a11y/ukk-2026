@@ -9,13 +9,12 @@ if (isset($_POST['simpan'])) {
     $kode = mysqli_real_escape_string($koneksi, $_POST['kode']);
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $poin = (int)$_POST['poin'];
-    $desc = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
     
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_pelanggaran SET pelanggaran_kategori_id='$kid', kode='$kode', nama='$nama', poin='$poin', deskripsi='$desc', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
     } else {
-        mysqli_query($koneksi, "INSERT INTO t_pelanggaran (pelanggaran_kategori_id, kode, nama, poin, deskripsi, status_aktif, created_at, updated_at) VALUES ('$kid', '$kode', '$nama', '$poin', '$desc', '$status', NOW(), NOW())");
+        mysqli_query($koneksi, "INSERT INTO t_pelanggaran (pelanggaran_kategori_id, kode, nama, poin, status_aktif, created_at, updated_at) VALUES ('$kid', '$kode', '$nama', '$poin', '$desc', '$status', NOW(), NOW())");
     }
     header("Location: kelola_jenis_pelanggaran.php"); exit();
 }
@@ -114,11 +113,7 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                         <input type="number" name="poin" class="form-control" value="<?= htmlspecialchars($edit['poin'] ?? ''); ?>" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Deskripsi:</label>
-                        <textarea name="deskripsi" class="form-control" rows="3"><?= htmlspecialchars($edit['deskripsi'] ?? ''); ?></textarea>
-                    </div>
-
+                
                     <div class="mb-3">
                         <label class="form-label fw-bold">Status Aktif:</label>
                         <select name="status_aktif" class="form-control" required>

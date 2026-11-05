@@ -6,8 +6,20 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $role = $_SESSION['role'];
-// Perbaikan penanganan session nama agar tidak undefined error
 $nama = isset($_SESSION['nama_user']) ? $_SESSION['nama_user'] : (isset($_SESSION['name']) ? $_SESSION['name'] : 'User');
+$is_wali_kelas = isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true;
+
+// Tentukan label teks akses yang akan ditampilkan di layar
+if ($role === 'admin') {
+    $teks_akses = 'ADMIN';
+    $badge_class = 'bg-primary';
+} elseif ($is_wali_kelas) {
+    $teks_akses = 'WALI KELAS';
+    $badge_class = 'bg-success';
+} else {
+    $teks_akses = 'GURU';
+    $badge_class = 'bg-info text-dark';
+}
 
 // Hitung total data otomatis dari database untuk card (khusus admin)
 $jml_siswa = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_siswa"))[0];
@@ -57,7 +69,7 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
             <?php endif; ?>
 
             <!-- Menu Laporan: Tampil untuk Admin ATAU Guru yang berstatus Wali Kelas -->
-            <?php if ($role === 'admin' || (isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true)): ?>
+            <?php if ($role === 'admin' || $is_wali_kelas): ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
 
@@ -70,11 +82,8 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
     <div class="main-content">
         <div class="p-4 mb-4 bg-white rounded shadow-sm border-start border-primary border-4">
             <h2>Selamat Datang, <?= htmlspecialchars($nama); ?>! 👋</h2>
-            <p class="text-muted mb-0">Anda masuk sebagai akses: <span class="badge bg-primary text-uppercase"><?= htmlspecialchars($role); ?></span>
-            <?php if (isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true): ?>
-                <span class="badge bg-success ms-1">Wali Kelas</span>
-            <?php endif; ?>
-            </p>
+            <!-- Teks Akses yang Berubah Dinamis Sesuai Peran -->
+            <p class="text-muted mb-0">Anda masuk sebagai akses: <span class="badge <?= $badge_class; ?> text-uppercase"><?= $teks_akses; ?></span></p>
         </div>
 
         <?php if ($role === 'admin'): ?>
