@@ -2,33 +2,33 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT DENGAN STATUS OTOMATIS BERDASARKAN TAHUN)
+$tgl_ini = date('Y-m-d');
+mysqli_query($koneksi, "UPDATE t_tahun_ajaran SET status_aktif = 0");
+mysqli_query($koneksi, "UPDATE t_tahun_ajaran SET status_aktif = 1 WHERE '$tgl_ini' BETWEEN tanggal_mulai AND tanggal_selesai");
+
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $tgl_mulai = $_POST['tanggal_mulai'];
-    $tgl_selesai = $_POST['tanggal_selesai'];
-    
-    // Otomatis menentukan status aktif berdasarkan tahun berjalan
-    $tahun_sekarang = date('Y'); // Mengambil tahun saat ini (2026)
-    $cek_tahun = explode('/', $nama);
-    $status = (in_array($tahun_sekarang, $cek_tahun) || (date('Y-m-d') >= $tgl_mulai && date('Y-m-d') <= $tgl_selesai)) ? 1 : 0;
-    
+    $mulai = $_POST['tanggal_mulai'];
+    $selesai = $_POST['tanggal_selesai'];
+    $aktif = ($tgl_ini >= $mulai && $tgl_ini <= $selesai) ? 1 : 0;
+
+    if ($aktif == 1) mysqli_query($koneksi, "UPDATE t_tahun_ajaran SET status_aktif = 0");
+
     if ($id) {
-        mysqli_query($koneksi, "UPDATE t_tahun_ajaran SET nama='$nama', tanggal_mulai='$tgl_mulai', tanggal_selesai='$tgl_selesai', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
+        mysqli_query($koneksi, "UPDATE t_tahun_ajaran SET nama='$nama', tanggal_mulai='$mulai', tanggal_selesai='$selesai', status_aktif='$aktif', updated_at=NOW() WHERE id='$id'");
     } else {
-        mysqli_query($koneksi, "INSERT INTO t_tahun_ajaran (nama, tanggal_mulai, tanggal_selesai, status_aktif, created_at, updated_at) VALUES ('$nama', '$tgl_mulai', '$tgl_selesai', '$status', NOW(), NOW())");
+        mysqli_query($koneksi, "INSERT INTO t_tahun_ajaran (nama, tanggal_mulai, tanggal_selesai, status_aktif, created_at, updated_at) VALUES ('$nama', '$mulai', '$selesai', '$aktif', NOW(), NOW())");
     }
     header("Location: kelola_tahun_ajaran.php"); exit();
 }
 
-// 2. PROSES HAPUS (BERSIHKAN RELASI FOREIGN KEY)
 if (isset($_GET['hapus'])) {
-    $id_ta = $_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE tahun_ajaran_id='$id_ta'");
-    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE tahun_ajaran_id='$id_ta'");
-    mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE tahun_ajaran_id='$id_ta'");
-    mysqli_query($koneksi, "DELETE FROM t_tahun_ajaran WHERE id='$id_ta'");
+    $id = $_GET['hapus'];
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE tahun_ajaran_id='$id'");
+    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE tahun_ajaran_id='$id'");
+    mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE tahun_ajaran_id='$id'");
+    mysqli_query($koneksi, "DELETE FROM t_tahun_ajaran WHERE id='$id'");
     header("Location: kelola_tahun_ajaran.php"); exit();
 }
 
@@ -43,7 +43,7 @@ $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE nama LIKE '%$cari%'" : "";
 
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_tahun_ajaran $where"));
-$pages = ceil($total / $limit);
+$pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran $where LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -68,7 +68,7 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
-            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php" class="active" >Kelola Tahun Ajaran</a></li>
+            <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php" class="active">Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php">Kelola Kategori Pelanggaran</a></li>
@@ -81,43 +81,33 @@ $no = $offset + 1;
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- ================= FORM HALAMAN PENUH ================= -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Tahun Ajaran' : 'Tambah Tahun Ajaran'; ?></h2>
                 <a href="kelola_tahun_ajaran.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
             </div>
             <hr>
-
             <div class="card shadow-sm"><div class="card-body">
                 <form method="POST">
                     <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
-                    
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tahun Ajaran:</label>
-                        <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" placeholder="Contoh: 2027/2028" required>
-                        <small class="text-muted">Status aktif akan menyesuaikan secara otomatis dengan tahun sistem.</small>
+                        <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" placeholder="Contoh: 2026/2027" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tanggal Mulai:</label>
                         <input type="date" name="tanggal_mulai" class="form-control" value="<?= htmlspecialchars($edit['tanggal_mulai'] ?? ''); ?>" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tanggal Selesai:</label>
                         <input type="date" name="tanggal_selesai" class="form-control" value="<?= htmlspecialchars($edit['tanggal_selesai'] ?? ''); ?>" required>
                     </div>
-
-                    <hr>
                     <div class="d-flex justify-content-end">
                         <a href="kelola_tahun_ajaran.php" class="btn btn-secondary me-2">Batal</a>
                         <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div></div>
-
         <?php else: ?>
-            <!-- ================= TABEL UTAMA ================= -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Tahun Ajaran</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -140,30 +130,25 @@ $no = $offset + 1;
                             <tr><th>No</th><th>Tahun Ajaran</th><th>Tanggal Mulai</th><th>Tanggal Selesai</th><th>Status Aktif</th><th class="text-center">Aksi</th></tr>
                         </thead>
                         <tbody>
-                            <?php while($r = mysqli_fetch_assoc($data)): ?>
+                            <?php if ($data && mysqli_num_rows($data) > 0): while($r = mysqli_fetch_assoc($data)): ?>
                             <tr>
                                 <td><?= $no++; ?></td>
                                 <td><?= htmlspecialchars($r['nama']); ?></td>
                                 <td><?= htmlspecialchars($r['tanggal_mulai']); ?></td>
                                 <td><?= htmlspecialchars($r['tanggal_selesai']); ?></td>
-                                <td>
-                                    <span class="badge bg-<?= ($r['status_aktif'] == 1 || $r['status_aktif'] == 'Aktif') ? 'success' : 'secondary'; ?>">
-                                        <?= ($r['status_aktif'] == 1 || $r['status_aktif'] == 'Aktif') ? 'Aktif' : 'Tidak Aktif'; ?>
-                                    </span>
-                                </td>
+                                <td><span class="badge bg-<?= $r['status_aktif'] == 1 ? 'success' : 'secondary'; ?>"><?= $r['status_aktif'] == 1 ? 'Aktif' : 'Tidak Aktif'; ?></span></td>
                                 <td class="text-center">
                                     <a href="?edit=<?= $r['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
                                     <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus data tahun ajaran ini?')">Hapus</a>
                                 </td>
                             </tr>
-                            <?php endwhile; if(!$total): ?>
+                            <?php endwhile; else: ?>
                             <tr><td colspan="6" class="text-center text-muted">Data tahun ajaran tidak ditemukan.</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">
@@ -179,7 +164,6 @@ $no = $offset + 1;
             </div></div>
         <?php endif; ?>
     </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

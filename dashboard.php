@@ -1,27 +1,19 @@
 <?php
 require_once 'koneksi.php';
-if (!isset($_SESSION['user_id'])) { 
-    header("Location: login.php"); 
-    exit(); 
-}
+if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 
 $role = $_SESSION['role'];
-$nama = isset($_SESSION['nama_user']) ? $_SESSION['nama_user'] : (isset($_SESSION['name']) ? $_SESSION['name'] : 'User');
-$is_wali_kelas = isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true;
+$nama = $_SESSION['nama_user'] ?? $_SESSION['name'] ?? 'User';
+$is_wali = $_SESSION['is_wali_kelas'] ?? false;
 
-// Tentukan label teks akses yang akan ditampilkan di layar
 if ($role === 'admin') {
-    $teks_akses = 'ADMIN';
-    $badge_class = 'bg-primary';
-} elseif ($is_wali_kelas) {
-    $teks_akses = 'WALI KELAS';
-    $badge_class = 'bg-success';
+    $teks_akses = 'ADMIN'; $badge = 'bg-primary';
+} elseif ($is_wali) {
+    $teks_akses = 'GURU + WALI KELAS'; $badge = 'bg-success';
 } else {
-    $teks_akses = 'GURU';
-    $badge_class = 'bg-info text-dark';
+    $teks_akses = 'GURU'; $badge = 'bg-info text-dark';
 }
 
-// Hitung total data otomatis dari database untuk card (khusus admin)
 $jml_siswa = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_siswa"))[0];
 $jml_guru  = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_guru"))[0];
 $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kelas"))[0];
@@ -29,8 +21,7 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Sistem Pelanggaran Siswa</title>
+    <meta charset="UTF-8"><title>Dashboard - Sistem Pelanggaran Siswa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
@@ -38,8 +29,7 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 30px; }
-        .card-hover { transition: transform 0.2s; }
-        .card-hover:hover { transform: translateY(-5px); }
+        .card-hover:hover { transform: translateY(-5px); transition: 0.2s; }
     </style>
 </head>
 <body>
@@ -68,8 +58,7 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
                 <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
             <?php endif; ?>
 
-            <!-- Menu Laporan: Tampil untuk Admin ATAU Guru yang berstatus Wali Kelas -->
-            <?php if ($role === 'admin' || $is_wali_kelas): ?>
+            <?php if ($role === 'admin' || $is_wali): ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
 
@@ -82,13 +71,11 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
     <div class="main-content">
         <div class="p-4 mb-4 bg-white rounded shadow-sm border-start border-primary border-4">
             <h2>Selamat Datang, <?= htmlspecialchars($nama); ?>! 👋</h2>
-            <!-- Teks Akses yang Berubah Dinamis Sesuai Peran -->
-            <p class="text-muted mb-0">Anda masuk sebagai akses: <span class="badge <?= $badge_class; ?> text-uppercase"><?= $teks_akses; ?></span></p>
+            <p class="text-muted mb-0">Anda masuk sebagai akses: <span class="badge <?= $badge; ?> text-uppercase"><?= $teks_akses; ?></span></p>
         </div>
 
         <?php if ($role === 'admin'): ?>
         <div class="row">
-            <!-- CARD DATA SISWA -->
             <div class="col-md-4 mb-3">
                 <div class="card shadow-sm border-0 card-hover bg-primary text-white">
                     <div class="card-body">
@@ -98,8 +85,6 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
                     </div>
                 </div>
             </div>
-
-            <!-- CARD DATA GURU -->
             <div class="col-md-4 mb-3">
                 <div class="card shadow-sm border-0 card-hover bg-success text-white">
                     <div class="card-body">
@@ -109,8 +94,6 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
                     </div>
                 </div>
             </div>
-
-            <!-- CARD KELAS -->
             <div class="col-md-4 mb-3">
                 <div class="card shadow-sm border-0 card-hover bg-warning text-dark">
                     <div class="card-body">
