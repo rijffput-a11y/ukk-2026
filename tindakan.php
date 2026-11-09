@@ -2,8 +2,18 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 
+// 1. PROSES UPDATE STATUS TINDAKAN
 if (isset($_POST['update_status'])) {
-    mysqli_query($koneksi, "UPDATE t_pelanggaran_siswa SET status='{$_POST['status']}' WHERE id='{$_POST['id']}'");
+    $id = mysqli_real_escape_string($koneksi, $_POST['id']);
+    $status = mysqli_real_escape_string($koneksi, $_POST['status']);
+    mysqli_query($koneksi, "UPDATE t_pelanggaran_siswa SET status='$status', updated_at=NOW() WHERE id='$id'");
+    header("Location: tindakan.php"); exit();
+}
+
+// 2. PROSES HAPUS DATA TINDAKAN
+if (isset($_GET['hapus'])) {
+    $id_hapus = mysqli_real_escape_string($koneksi, $_GET['hapus']);
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE id='$id_hapus'");
     header("Location: tindakan.php"); exit();
 }
 
@@ -11,10 +21,33 @@ $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
 $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
-$where = $cari ? "WHERE nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%' OR status LIKE '%$cari%'" : "";
 
-$total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where"));
-$pages = ceil($total / $limit);
+$where_clauses = [];
+if ($cari) {
+    $where_clauses[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%' OR status LIKE '%$cari%')";
+}
+
+// Cek apakah guru yang login terdaftar sebagai wali kelas aktif
+$user_id = $_SESSION['user_id'];
+$q_wk = mysqli_query($koneksi, "SELECT twk.kelas_id FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id' AND twk.status_aktif = 1");
+
+$arr_kelas = [];
+while ($wk = mysqli_fetch_assoc($q_wk)) {
+    $arr_kelas[] = $wk['kelas_id'];
+}
+$is_wali_kelas = !empty($arr_kelas);
+
+// Jika BUKAN admin dan merupakan wali kelas, batasi hanya kelas yang diwalikelaskan
+if ($_SESSION['role'] !== 'admin' && $is_wali_kelas) {
+    $id_kelas_list = implode(',', $arr_kelas);
+    $where_clauses[] = "kelas_id IN ($id_kelas_list)";
+}
+
+$where = count($where_clauses) > 0 ? "WHERE " . implode(' AND ', $where_clauses) : "";
+
+$total_query = mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where");
+$total = $total_query ? mysqli_num_rows($total_query) : 0;
+$pages = $total > 0 ? ceil($total / $limit) : 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -37,7 +70,6 @@ $no = $offset + 1;
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
         
-        <!-- Menu Khusus Admin -->
         <?php if ($_SESSION['role'] === 'admin'): ?>
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
@@ -49,14 +81,13 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
         <?php endif; ?>
 
-        <!-- Menu Umum / Guru -->
         <li class="nav-item mb-1"><a href="catat_pelanggaran.php">Catat Pelanggaran</a></li>
         <li class="nav-item mb-1"><a href="tindakan.php" class="active">Tindakan</a></li>
         <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
         <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
 
         <!-- Menu Laporan: Tampil untuk Admin ATAU Guru yang berstatus Wali Kelas -->
-        <?php if (($_SESSION['role'] === 'admin') || (isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true)): ?>
+        <?php if (($_SESSION['role'] === 'admin') || $is_wali_kelas): ?>
             <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
         <?php endif; ?>
 
@@ -80,15 +111,16 @@ $no = $offset + 1;
                 </div>
             </div>
 
-            <!-- Pembungkus table-responsive agar lebar tabel pas dan responsif di dalam card -->
             <div class="table-responsive">
                 <table class="table table-bordered table-striped align-middle">
                     <thead class="table-dark text-center">
                         <tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Pelanggaran</th><th>Poin</th><th>Pelapor</th><th>Status</th><th>Aksi</th></tr>
                     </thead>
                     <tbody>
-                        <?php while($r = mysqli_fetch_assoc($data)): 
-                            $bg = $r['status'] == 'Selesai' ? 'success' : ($r['status'] == 'Diproses' ? 'warning' : 'secondary');
+                        <?php 
+                        if ($data && mysqli_num_rows($data) > 0) {
+                            while($r = mysqli_fetch_assoc($data)): 
+                                $bg = $r['status'] == 'Selesai' ? 'success' : ($r['status'] == 'Diproses' ? 'warning' : 'secondary');
                         ?>
                         <tr>
                             <td class="text-center"><?= $no++; ?></td>
@@ -100,7 +132,8 @@ $no = $offset + 1;
                             <td><?= htmlspecialchars($r['nama_guru']); ?></td>
                             <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= htmlspecialchars($r['status']); ?></span></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#m<?= $r['id']; ?>">Proses</button>
+                                <button class="btn btn-sm btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#m<?= $r['id']; ?>">Proses</button>
+                                <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger mb-1" onclick="return confirm('Yakin ingin menghapus data tindakan ini?')">Hapus</a>
                             </td>
                         </tr>
 
@@ -128,9 +161,12 @@ $no = $offset + 1;
                                 </form>
                             </div></div>
                         </div>
-                        <?php endwhile; if(!$total): ?>
-                        <tr><td colspan="9" class="text-center text-muted">Belum ada data tindakan.</td></tr>
-                        <?php endif; ?>
+                        <?php 
+                            endwhile; 
+                        } else { 
+                        ?>
+                        <tr><td colspan="9" class="text-center text-muted">Belum ada data tindakan pelanggaran.</td></tr>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
