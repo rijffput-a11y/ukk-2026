@@ -11,33 +11,31 @@ if (isset($_POST['simpan'])) {
 }
 
 if (isset($_GET['hapus'])) {
-    $id = mysqli_real_escape_string($koneksi, $_GET['hapus']);
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE id='$id'");
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE id='{$_GET['hapus']}'");
     header("Location: tindakan.php"); exit();
 }
 
-$proses_id = $_GET['proses'] ?? '';
-$row_edit = $proses_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa WHERE id='$proses_id'")) : null;
+$edit = isset($_GET['tindak']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa WHERE id='{$_GET['tindak']}'")) : null;
 
 $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
 $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 
-$where_clauses = [];
-if ($cari) $where_clauses[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%' OR status LIKE '%$cari%')";
+// Filter wajib: Hanya tampilkan data yang BELUM selesai di halaman Tindakan
+$where_arr = ["status != 'Selesai'"];
+if ($cari) {
+    $where_arr[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')";
+}
 
 $user_id = $_SESSION['user_id'];
 $q_wk = mysqli_query($koneksi, "SELECT twk.kelas_id FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id' AND twk.status_aktif = 1");
-$arr_kelas = [];
-while ($wk = mysqli_fetch_assoc($q_wk)) { $arr_kelas[] = $wk['kelas_id']; }
-$is_wali_kelas = !empty($arr_kelas);
-
-if ($_SESSION['role'] !== 'admin' && $is_wali_kelas) {
-    $where_clauses[] = "kelas_id IN (" . implode(',', $arr_kelas) . ")";
+$arr_k = []; while ($wk = mysqli_fetch_assoc($q_wk)) { $arr_k[] = $wk['kelas_id']; }
+if ($_SESSION['role'] !== 'admin' && !empty($arr_k)) { 
+    $where_arr[] = "kelas_id IN (" . implode(',', $arr_k) . ")"; 
 }
 
-$where = count($where_clauses) > 0 ? "WHERE " . implode(' AND ', $where_clauses) : "";
+$where = "WHERE " . implode(' AND ', $where_arr);
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where"));
 $pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC LIMIT $offset, $limit");
@@ -75,7 +73,7 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="tindakan.php" class="active">Tindakan</a></li>
             <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
             <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-            <?php if (($_SESSION['role'] === 'admin') || $is_wali_kelas): ?>
+            <?php if ($_SESSION['role'] === 'admin' || !empty($arr_k)): ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
@@ -84,36 +82,40 @@ $no = $offset + 1;
     </div>
 
     <div class="main-content">
-        <?php if ($row_edit): ?>
+        <?php if ($edit): ?>
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2>Form Penanganan Tindakan</h2>
+                <h2>Form Tindakan Siswa</h2>
                 <a href="tindakan.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
             </div>
             <hr>
             <div class="card shadow-sm"><div class="card-body">
                 <form method="POST">
-                    <input type="hidden" name="id" value="<?= $row_edit['id']; ?>">
+                    <input type="hidden" name="id" value="<?= $edit['id']; ?>">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Siswa:</label>
-                        <input type="text" class="form-control" value="<?= htmlspecialchars($row_edit['nama_siswa'] . ' (' . $row_edit['nama_kelas'] . ')'); ?>" disabled>
+                        <label class="form-label fw-bold">Siswa & Kelas:</label>
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($edit['nama_siswa'] . ' (' . $edit['nama_kelas'] . ')'); ?>" disabled>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Pelanggaran:</label>
-                        <input type="text" class="form-control" value="<?= htmlspecialchars($row_edit['nama_pelanggaran'] . ' (Poin: ' . $row_edit['poin'] . ')'); ?>" disabled>
+                        <label class="form-label fw-bold">Pelanggaran & Poin:</label>
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($edit['nama_pelanggaran'] . ' [Poin: ' . $edit['poin'] . ']'); ?>" disabled>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Bentuk Tindakan / Penanganan:</label>
-                        <input type="text" name="tindakan" class="form-control" value="<?= htmlspecialchars($row_edit['tindakan'] ?? ''); ?>" placeholder="Contoh: Peringatan lisan dan teguran" required>
+                        <label class="form-label fw-bold">Bentuk Tindakan:</label>
+                        <input type="text" name="tindakan" id="tindakanTxt" class="form-control" value="<?= htmlspecialchars($edit['tindakan'] ?? 'Peringatan lisan dan teguran'); ?>" required>
+                        <div class="mt-2">
+                            <small class="text-muted">Cepat:</small>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0" onclick="document.getElementById('tindakanTxt').value='Peringatan lisan dan teguran'">Lisan</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0" onclick="document.getElementById('tindakanTxt').value='Pemanggilan orang tua'">Ortu</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0" onclick="document.getElementById('tindakanTxt').value='Surat peringatan'">SP</button>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Status Penanganan:</label>
+                        <label class="form-label fw-bold">Status:</label>
                         <select name="status" class="form-control" required>
-                            <option value="Pending" <?= $row_edit['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
-                            <option value="Diproses" <?= $row_edit['status'] == 'Diproses' ? 'selected' : ''; ?>>Diproses</option>
-                            <option value="Selesai" <?= $row_edit['status'] == 'Selesai' ? 'selected' : ''; ?>>Selesai</option>
+                            <option value="Selesai">Selesai (Pindah ke Riwayat)</option>
+                            <option value="Diproses" selected>Diproses</option>
                         </select>
                     </div>
-                    <hr>
                     <div class="d-flex justify-content-end">
                         <a href="tindakan.php" class="btn btn-secondary me-2">Batal</a>
                         <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
@@ -121,17 +123,14 @@ $no = $offset + 1;
                 </form>
             </div></div>
         <?php else: ?>
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h2>Tindakan & Penanganan Pelanggaran</h2>
-            </div>
+            <h2>Tindakan & Penanganan Pelanggaran</h2>
             <hr>
             <div class="card shadow-sm"><div class="card-body">
                 <div class="row mb-3 justify-content-between">
-                    <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>
+                    <div class="col-auto">Data Pending/Diproses: <b><?= $total; ?></b></div>
                     <div class="col-auto">
                         <form method="GET" class="d-flex align-items-center">
-                            <label class="me-2 mb-0 fw-bold">Cari:</label>
-                            <input type="text" name="cari" class="form-control form-control-sm" value="<?= htmlspecialchars($cari); ?>">
+                            <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari..." value="<?= htmlspecialchars($cari); ?>">
                         </form>
                     </div>
                 </div>
@@ -143,7 +142,8 @@ $no = $offset + 1;
                         </thead>
                         <tbody>
                             <?php if ($data && mysqli_num_rows($data) > 0): while($r = mysqli_fetch_assoc($data)): 
-                                $bg = $r['status'] == 'Selesai' ? 'success' : ($r['status'] == 'Diproses' ? 'warning' : 'secondary');
+                                $st = ($r['status'] == 'Pending') ? 'Diproses' : $r['status'];
+                                $bg = 'warning';
                             ?>
                             <tr>
                                 <td class="text-center"><?= $no++; ?></td>
@@ -153,31 +153,24 @@ $no = $offset + 1;
                                 <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
                                 <td class="text-center"><strong><?= htmlspecialchars($r['poin']); ?></strong></td>
                                 <td><?= htmlspecialchars($r['tindakan'] ?? '-'); ?></td>
-                                <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= htmlspecialchars($r['status']); ?></span></td>
+                                <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= $st; ?></span></td>
                                 <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a href="?proses=<?= $r['id']; ?>" class="btn btn-primary">Proses</a>
-                                        <a href="?hapus=<?= $r['id']; ?>" class="btn btn-danger" onclick="return confirm('Hapus data tindakan ini?')">Hapus</a>
-                                    </div>
+                                    <a href="?tindak=<?= $r['id']; ?>" class="btn btn-sm btn-primary">Tindak</a>
+                                    <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
                                 </td>
                             </tr>
                             <?php endwhile; else: ?>
-                            <tr><td colspan="9" class="text-center text-muted">Belum ada data tindakan pelanggaran.</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted">Tidak ada data tindakan yang perlu diproses.</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                    <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
+                    <small class="text-muted">Hal <?= $h; ?> dari <?= $pages; ?></small>
                     <ul class="pagination pagination-sm mb-0">
-                        <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
                         <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
-                        <?php for($i=1; $i<=$pages; $i++): ?>
-                            <li class="page-item <?= $h == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
-                        <?php endfor; ?>
                         <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h+1; ?>&cari=<?= $cari; ?>">Berikutnya</a></li>
-                        <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $pages; ?>&cari=<?= $cari; ?>">Terakhir</a></li>
                     </ul>
                 </div>
             </div></div>

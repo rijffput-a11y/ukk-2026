@@ -7,12 +7,12 @@ $h = max(1, (int)($_GET['halaman'] ?? 1));
 $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 
-$where_clauses = [];
+// Filter wajib: Hanya status 'Selesai' untuk halaman riwayat
+$where_clauses = ["status = 'Selesai'"];
 if ($cari) {
-    $where_clauses[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%' OR status LIKE '%$cari%')";
+    $where_clauses[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')";
 }
 
-// Cek apakah guru yang login terdaftar sebagai wali kelas aktif
 $user_id = $_SESSION['user_id'];
 $q_wk = mysqli_query($koneksi, "SELECT twk.kelas_id FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id' AND twk.status_aktif = 1");
 
@@ -22,16 +22,15 @@ while ($wk = mysqli_fetch_assoc($q_wk)) {
 }
 $is_wali_kelas = !empty($arr_kelas);
 
-// Jika BUKAN admin dan merupakan wali kelas, batasi hanya kelas yang diwalikelaskan
 if ($_SESSION['role'] !== 'admin' && $is_wali_kelas) {
     $id_kelas_list = implode(',', $arr_kelas);
     $where_clauses[] = "kelas_id IN ($id_kelas_list)";
 }
 
-$where = count($where_clauses) > 0 ? "WHERE " . implode(' AND ', $where_clauses) : "";
+$where = "WHERE " . implode(' AND ', $where_clauses);
 
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where"));
-$pages = ceil($total / $limit);
+$pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -70,7 +69,6 @@ $no = $offset + 1;
         <li class="nav-item mb-1"><a href="riwayat.php" class="active">Riwayat</a></li>
         <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
 
-        <!-- Menu Laporan: Hanya tampil untuk Admin ATAU Guru yang berstatus Wali Kelas -->
         <?php if (($_SESSION['role'] === 'admin') || $is_wali_kelas): ?>
             <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
         <?php endif; ?>
@@ -81,7 +79,7 @@ $no = $offset + 1;
 </div>
 
     <div class="main-content">
-        <h2>Riwayat Pelanggaran Siswa</h2>
+        <h2>Riwayat Pelanggaran Siswa (Selesai)</h2>
         <hr>
 
         <div class="card shadow-sm"><div class="card-body">
@@ -101,9 +99,7 @@ $no = $offset + 1;
                         <tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Pelanggaran</th><th>Poin</th><th>Pelapor</th><th>Status</th></tr>
                     </thead>
                     <tbody>
-                        <?php while($r = mysqli_fetch_assoc($data)): 
-                            $bg = $r['status'] == 'Selesai' ? 'success' : ($r['status'] == 'Diproses' ? 'warning' : 'secondary');
-                        ?>
+                        <?php while($r = mysqli_fetch_assoc($data)): ?>
                         <tr>
                             <td class="text-center"><?= $no++; ?></td>
                             <td class="text-center"><?= htmlspecialchars($r['tanggal']); ?></td>
@@ -112,10 +108,10 @@ $no = $offset + 1;
                             <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
                             <td class="text-center"><strong><?= htmlspecialchars($r['poin']); ?></strong></td>
                             <td><?= htmlspecialchars($r['nama_guru']); ?></td>
-                            <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= htmlspecialchars($r['status']); ?></span></td>
+                            <td class="text-center"><span class="badge bg-success"><?= htmlspecialchars($r['status']); ?></span></td>
                         </tr>
                         <?php endwhile; if(!$total): ?>
-                        <tr><td colspan="8" class="text-center text-muted">Belum ada riwayat pelanggaran.</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted">Belum ada riwayat pelanggaran yang selesai.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
