@@ -7,7 +7,10 @@ if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $gid = $_POST['guru_id'];
     $kid = $_POST['kelas_id'];
-    $tid = $_POST['tahun_ajaran_id'];
+    
+    // Ambil tahun ajaran yang sedang aktif secara otomatis
+    $ta_aktif = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT id FROM t_tahun_ajaran WHERE status_aktif=1 LIMIT 1"));
+    $tid = $ta_aktif['id'] ?? 1;
     
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_wali_kelas SET guru_id='$gid', kelas_id='$kid', tahun_ajaran_id='$tid', updated_at=NOW() WHERE id='$id'");
@@ -19,8 +22,7 @@ if (isset($_POST['simpan'])) {
 
 // 2. PROSES HAPUS
 if (isset($_GET['hapus'])) {
-    $id_wali = $_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE id='$id_wali'");
+    mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE id='{$_GET['hapus']}'");
     header("Location: kelola_wali_kelas.php"); exit();
 }
 
@@ -35,19 +37,21 @@ $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE tg.nama LIKE '%$cari%' OR tk.nama LIKE '%$cari%' OR ta.nama LIKE '%$cari%'" : "";
 
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT tw.id FROM t_wali_kelas tw JOIN t_guru tg ON tw.guru_id=tg.id JOIN t_kelas tk ON tw.kelas_id=tk.id JOIN t_tahun_ajaran ta ON tw.tahun_ajaran_id=ta.id $where"));
-$pages = ceil($total / $limit);
-$data = mysqli_query($koneksi, "SELECT tw.*, tg.nama AS nama_guru, tk.nama AS nama_kelas, ta.nama AS tahun_ajaran FROM t_wali_kelas tw JOIN t_guru tg ON tw.guru_id=tg.id JOIN t_kelas tk ON tw.kelas_id=tk.id JOIN t_tahun_ajaran ta ON tw.tahun_ajaran_id=ta.id $where LIMIT $offset, $limit");
+$pages = ceil($total / $limit) ?: 1;
+$data = mysqli_query($koneksi, "SELECT tw.*, tg.nama AS nama_guru, tk.nama AS nama_kelas, ta.nama AS tahun_ajaran FROM t_wali_kelas tw JOIN t_guru tg ON tw.guru_id=tg.id JOIN t_kelas tk ON tw.kelas_id=tk.id JOIN t_tahun_ajaran ta ON tw.tahun_ajaran_id=ta.id $where ORDER BY tk.nama ASC, tg.nama ASC LIMIT $offset, $limit");
 $no = $offset + 1;
 
 $opt_guru = mysqli_query($koneksi, "SELECT * FROM t_guru WHERE status_aktif=1 ORDER BY nama ASC");
 $opt_kelas = mysqli_query($koneksi, "SELECT * FROM t_kelas WHERE status_aktif=1 ORDER BY nama ASC");
-$opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_aktif=1 ORDER BY nama DESC");
+$ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_aktif=1 LIMIT 1"));
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8"><title>Kelola Wali Kelas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <style>
         body { background: #f8f9fa; }
         .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
@@ -60,7 +64,7 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
     <div class="sidebar d-flex flex-column p-3">
         <h4 class="text-white mb-4">Pelanggaran Siswa</h4>
         <ul class="nav nav-pills flex-column mb-auto">
-           <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
@@ -77,7 +81,6 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- ================= FORM HALAMAN PENUH ================= -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Wali Kelas' : 'Tambah Wali Kelas'; ?></h2>
                 <a href="kelola_wali_kelas.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
@@ -90,9 +93,9 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Pilih Guru:</label>
-                        <select name="guru_id" class="form-control" required>
-                            <option value="">-- Pilih Guru --</option>
-                            <?php mysqli_data_seek($opt_guru, 0); while($g = mysqli_fetch_assoc($opt_guru)): ?>
+                        <select name="guru_id" class="form-control select2" required>
+                            <option value="">-- Cari & Pilih Guru --</option>
+                            <?php while($g = mysqli_fetch_assoc($opt_guru)): ?>
                                 <option value="<?= $g['id']; ?>" <?= (($edit['guru_id'] ?? '') == $g['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($g['nama']); ?></option>
                             <?php endwhile; ?>
                         </select>
@@ -100,22 +103,18 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Pilih Kelas:</label>
-                        <select name="kelas_id" class="form-control" required>
-                            <option value="">-- Pilih Kelas --</option>
-                            <?php mysqli_data_seek($opt_kelas, 0); while($k = mysqli_fetch_assoc($opt_kelas)): ?>
+                        <select name="kelas_id" class="form-control select2" required>
+                            <option value="">-- Cari & Pilih Kelas --</option>
+                            <?php while($k = mysqli_fetch_assoc($opt_kelas)): ?>
                                 <option value="<?= $k['id']; ?>" <?= (($edit['kelas_id'] ?? '') == $k['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($k['nama']); ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Pilih Tahun Ajaran:</label>
-                        <select name="tahun_ajaran_id" class="form-control" required>
-                            <option value="">-- Pilih Tahun Ajaran --</option>
-                            <?php mysqli_data_seek($opt_ta, 0); while($t = mysqli_fetch_assoc($opt_ta)): ?>
-                                <option value="<?= $t['id']; ?>" <?= (($edit['tahun_ajaran_id'] ?? '') == $t['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($t['nama']); ?></option>
-                            <?php endwhile; ?>
-                        </select>
+                        <label class="form-label fw-bold">Tahun Ajaran Aktif:</label>
+                        <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($ta_default['nama'] ?? 'Tidak ada tahun ajaran aktif'); ?>" disabled>
+                        <small class="text-muted">Tahun ajaran otomatis mengikuti status aktif saat ini.</small>
                     </div>
 
                     <hr>
@@ -127,7 +126,6 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
             </div></div>
 
         <?php else: ?>
-            <!-- ================= TABEL UTAMA ================= -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Wali Kelas</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -185,6 +183,11 @@ $opt_ta = mysqli_query($koneksi, "SELECT * FROM t_tahun_ajaran WHERE status_akti
         <?php endif; ?>
     </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() { $('.select2').select2({ theme: 'bootstrap-5', width: '100%' }); });
+</script>
 </body>
 </html>

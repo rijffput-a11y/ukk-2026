@@ -22,23 +22,13 @@ $h = max(1, (int)($_GET['halaman'] ?? 1));
 $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 
-// Filter wajib: Hanya tampilkan data yang BELUM selesai di halaman Tindakan
 $where_arr = ["status != 'Selesai'"];
-if ($cari) {
-    $where_arr[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')";
-}
-
-$user_id = $_SESSION['user_id'];
-$q_wk = mysqli_query($koneksi, "SELECT twk.kelas_id FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id' AND twk.status_aktif = 1");
-$arr_k = []; while ($wk = mysqli_fetch_assoc($q_wk)) { $arr_k[] = $wk['kelas_id']; }
-if ($_SESSION['role'] !== 'admin' && !empty($arr_k)) { 
-    $where_arr[] = "kelas_id IN (" . implode(',', $arr_k) . ")"; 
-}
+if ($cari) { $where_arr[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')"; }
 
 $where = "WHERE " . implode(' AND ', $where_arr);
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where"));
 $pages = ceil($total / $limit) ?: 1;
-$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC LIMIT $offset, $limit");
+$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY nama_kelas ASC, tanggal DESC LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
 <!DOCTYPE html>
@@ -73,9 +63,15 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="tindakan.php" class="active">Tindakan</a></li>
             <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
             <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-            <?php if ($_SESSION['role'] === 'admin' || !empty($arr_k)): ?>
+            
+            <?php 
+            $user_id_sb = $_SESSION['user_id'];
+            $q_chk_wk = mysqli_query($koneksi, "SELECT 1 FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id_sb' AND twk.status_aktif = 1");
+            if (($_SESSION['role'] === 'admin') || mysqli_num_rows($q_chk_wk) > 0): 
+            ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
+
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
@@ -127,7 +123,7 @@ $no = $offset + 1;
             <hr>
             <div class="card shadow-sm"><div class="card-body">
                 <div class="row mb-3 justify-content-between">
-                    <div class="col-auto">Data Pending/Diproses: <b><?= $total; ?></b></div>
+                    <div class="col-auto">Total Data: <b><?= $total; ?></b></div>
                     <div class="col-auto">
                         <form method="GET" class="d-flex align-items-center">
                             <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari..." value="<?= htmlspecialchars($cari); ?>">
@@ -143,7 +139,6 @@ $no = $offset + 1;
                         <tbody>
                             <?php if ($data && mysqli_num_rows($data) > 0): while($r = mysqli_fetch_assoc($data)): 
                                 $st = ($r['status'] == 'Pending') ? 'Diproses' : $r['status'];
-                                $bg = 'warning';
                             ?>
                             <tr>
                                 <td class="text-center"><?= $no++; ?></td>
@@ -153,7 +148,7 @@ $no = $offset + 1;
                                 <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
                                 <td class="text-center"><strong><?= htmlspecialchars($r['poin']); ?></strong></td>
                                 <td><?= htmlspecialchars($r['tindakan'] ?? '-'); ?></td>
-                                <td class="text-center"><span class="badge bg-<?= $bg; ?>"><?= $st; ?></span></td>
+                                <td class="text-center"><span class="badge bg-warning text-dark"><?= $st; ?></span></td>
                                 <td class="text-center">
                                     <a href="?tindak=<?= $r['id']; ?>" class="btn btn-sm btn-primary">Tindak</a>
                                     <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>

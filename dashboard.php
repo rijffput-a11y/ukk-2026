@@ -79,18 +79,18 @@ $jml_kelas = mysqli_fetch_row(mysqli_query($koneksi, "SELECT COUNT(*) FROM t_kel
             <div class="col-md-4 mb-3">
                 <div class="card shadow-sm border-0 card-hover bg-primary text-white">
                     <div class="card-body">
-                        <h5 class="card-title">Total Siswa</h5>
-                        <h2 class="display-6 fw-bold"><?= $jml_siswa; ?></h2>
-                        <a href="kelola_siswa.php" class="text-white text-decoration-none small stretched-link">Kelola Data Siswa &rarr;</a>
+                        <h5 class="card-title">Total Guru</h5>
+                        <h2 class="display-6 fw-bold"><?= $jml_guru; ?></h2>
+                        <a href="kelola_guru.php" class="text-white text-decoration-none small stretched-link">Kelola Data Guru &rarr;</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <div class="card shadow-sm border-0 card-hover bg-success text-white">
                     <div class="card-body">
-                        <h5 class="card-title">Total Guru</h5>
-                        <h2 class="display-6 fw-bold"><?= $jml_guru; ?></h2>
-                        <a href="kelola_guru.php" class="text-white text-decoration-none small stretched-link">Kelola Data Guru &rarr;</a>
+                        <h5 class="card-title">Total Siswa</h5>
+                        <h2 class="display-6 fw-bold"><?= $jml_siswa; ?></h2>
+                        <a href="kelola_siswa.php" class="text-white text-decoration-none small stretched-link">Kelola Data Siswa &rarr;</a>
                     </div>
                 </div>
             </div>

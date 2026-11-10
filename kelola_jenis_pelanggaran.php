@@ -12,9 +12,9 @@ if (isset($_POST['simpan'])) {
     $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
     
     if ($id) {
-        mysqli_query($koneksi, "UPDATE t_pelanggaran SET pelanggaran_kategori_id='$kid', kode='$kode', nama='$nama', poin='$poin', deskripsi='$desc', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
+        mysqli_query($koneksi, "UPDATE t_pelanggaran SET pelanggaran_kategori_id='$kid', kode='$kode', nama='$nama', poin='$poin', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
     } else {
-        mysqli_query($koneksi, "INSERT INTO t_pelanggaran (pelanggaran_kategori_id, kode, nama, poin, status_aktif, created_at, updated_at) VALUES ('$kid', '$kode', '$nama', '$poin', '$desc', '$status', NOW(), NOW())");
+        mysqli_query($koneksi, "INSERT INTO t_pelanggaran (pelanggaran_kategori_id, kode, nama, poin, status_aktif, created_at, updated_at) VALUES ('$kid', '$kode', '$nama', '$poin', '$status', NOW(), NOW())");
     }
     header("Location: kelola_jenis_pelanggaran.php"); exit();
 }
@@ -38,8 +38,8 @@ $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE tp.kode LIKE '%$cari%' OR tp.nama LIKE '%$cari%' OR pk.nama LIKE '%$cari%'" : "";
 
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT tp.id FROM t_pelanggaran tp LEFT JOIN t_pelanggaran_kategori pk ON tp.pelanggaran_kategori_id = pk.id $where"));
-$pages = ceil($total / $limit);
-$data = mysqli_query($koneksi, "SELECT tp.*, pk.nama AS nama_kategori FROM t_pelanggaran tp LEFT JOIN t_pelanggaran_kategori pk ON tp.pelanggaran_kategori_id = pk.id $where LIMIT $offset, $limit");
+$pages = ceil($total / $limit) ?: 1;
+$data = mysqli_query($koneksi, "SELECT tp.*, pk.nama AS nama_kategori FROM t_pelanggaran tp LEFT JOIN t_pelanggaran_kategori pk ON tp.pelanggaran_kategori_id = pk.id $where ORDER BY tp.kode ASC LIMIT $offset, $limit");
 $no = $offset + 1;
 $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHERE status_aktif=1 ORDER BY nama ASC");
 ?>
@@ -48,6 +48,8 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
 <head>
     <meta charset="UTF-8"><title>Kelola Jenis Pelanggaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <style>
         body { background: #f8f9fa; }
         .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
@@ -77,7 +79,6 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- ================= FORM HALAMAN PENUH ================= -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Jenis Pelanggaran' : 'Tambah Jenis Pelanggaran'; ?></h2>
                 <a href="kelola_jenis_pelanggaran.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
@@ -90,9 +91,9 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori Pelanggaran:</label>
-                        <select name="pelanggaran_kategori_id" class="form-control" required>
-                            <option value="">-- Pilih Kategori --</option>
-                            <?php mysqli_data_seek($opt_kategori, 0); while($k = mysqli_fetch_assoc($opt_kategori)): ?>
+                        <select name="pelanggaran_kategori_id" class="form-control select2" required>
+                            <option value="">-- Cari & Pilih Kategori --</option>
+                            <?php while($k = mysqli_fetch_assoc($opt_kategori)): ?>
                                 <option value="<?= $k['id']; ?>" <?= (($edit['pelanggaran_kategori_id'] ?? '') == $k['id']) ? 'selected' : ''; ?>><?= htmlspecialchars($k['nama']); ?></option>
                             <?php endwhile; ?>
                         </select>
@@ -113,7 +114,6 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                         <input type="number" name="poin" class="form-control" value="<?= htmlspecialchars($edit['poin'] ?? ''); ?>" required>
                     </div>
 
-                
                     <div class="mb-3">
                         <label class="form-label fw-bold">Status Aktif:</label>
                         <select name="status_aktif" class="form-control" required>
@@ -131,7 +131,6 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
             </div></div>
 
         <?php else: ?>
-            <!-- ================= TABEL UTAMA ================= -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Jenis Pelanggaran</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -196,6 +195,11 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
         <?php endif; ?>
     </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() { $('.select2').select2({ theme: 'bootstrap-5', width: '100%' }); });
+</script>
 </body>
 </html>
