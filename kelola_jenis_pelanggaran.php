@@ -2,7 +2,6 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $kid = $_POST['pelanggaran_kategori_id'];
@@ -19,11 +18,10 @@ if (isset($_POST['simpan'])) {
     header("Location: kelola_jenis_pelanggaran.php"); exit();
 }
 
-// 2. PROSES HAPUS (BERSIHKAN RELASI)
 if (isset($_GET['hapus'])) {
-    $id_pelanggaran = $_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE pelanggaran_id='$id_pelanggaran'");
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran WHERE id='$id_pelanggaran'");
+    $id_pel = $_GET['hapus'];
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE pelanggaran_id='$id_pel'");
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran WHERE id='$id_pel'");
     header("Location: kelola_jenis_pelanggaran.php"); exit();
 }
 
@@ -52,7 +50,7 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <style>
         body { background: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; z-index: 1000; }
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
@@ -84,11 +82,9 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                 <a href="kelola_jenis_pelanggaran.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
             </div>
             <hr>
-
             <div class="card shadow-sm"><div class="card-body">
                 <form method="POST">
                     <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
-                    
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori Pelanggaran:</label>
                         <select name="pelanggaran_kategori_id" class="form-control select2" required>
@@ -98,22 +94,18 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                             <?php endwhile; ?>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kode Pelanggaran:</label>
                         <input type="text" name="kode" class="form-control" value="<?= htmlspecialchars($edit['kode'] ?? ''); ?>" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Pelanggaran:</label>
                         <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Poin:</label>
                         <input type="number" name="poin" class="form-control" value="<?= htmlspecialchars($edit['poin'] ?? ''); ?>" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Status Aktif:</label>
                         <select name="status_aktif" class="form-control" required>
@@ -121,7 +113,6 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                             <option value="Tidak Aktif" <?= (($edit['status_aktif'] ?? 1) == 0 || ($edit['status_aktif'] ?? '') == 'Tidak Aktif') ? 'selected' : ''; ?>>Tidak Aktif</option>
                         </select>
                     </div>
-
                     <hr>
                     <div class="d-flex justify-content-end">
                         <a href="kelola_jenis_pelanggaran.php" class="btn btn-secondary me-2">Batal</a>
@@ -129,14 +120,12 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                     </div>
                 </form>
             </div></div>
-
         <?php else: ?>
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Jenis Pelanggaran</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
             </div>
             <hr>
-
             <div class="card shadow-sm"><div class="card-body">
                 <div class="row mb-3 justify-content-between">
                     <div class="col-auto">Tampilkan <select class="form-select form-select-sm d-inline-block w-auto"><option>10</option></select> data</div>
@@ -162,8 +151,8 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                                 <td><?= htmlspecialchars($r['nama_kategori']); ?></td>
                                 <td><?= htmlspecialchars($r['poin']); ?></td>
                                 <td>
-                                    <span class="badge bg-<?= ($r['status_aktif'] == 1 || $r['status_aktif'] == 'Aktif') ? 'success' : 'secondary'; ?>">
-                                        <?= ($r['status_aktif'] == 1 || $r['status_aktif'] == 'Aktif') ? 'Aktif' : 'Tidak Aktif'; ?>
+                                    <span class="badge bg-<?= ($r['status_aktif'] == 1) ? 'success' : 'secondary'; ?>">
+                                        <?= ($r['status_aktif'] == 1) ? 'Aktif' : 'Tidak Aktif'; ?>
                                     </span>
                                 </td>
                                 <td class="text-center">
@@ -178,7 +167,6 @@ $opt_kategori = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHE
                     </table>
                 </div>
 
-                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">

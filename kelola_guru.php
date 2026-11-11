@@ -2,7 +2,6 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $nip = mysqli_real_escape_string($koneksi, $_POST['nip']);
@@ -34,7 +33,6 @@ if (isset($_POST['simpan'])) {
     header("Location: kelola_guru.php"); exit();
 }
 
-// 2. PROSES HAPUS (MEMBERSIHKAN RELASI)
 if (isset($_GET['hapus'])) {
     $id_guru = $_GET['hapus'];
     $get_guru = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT user_id FROM t_guru WHERE id='$id_guru'"));
@@ -58,7 +56,7 @@ $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE nip LIKE '%$cari%' OR nama LIKE '%$cari%' OR email LIKE '%$cari%'" : "";
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_guru $where"));
-$pages = ceil($total / $limit);
+$pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_guru $where LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -69,7 +67,7 @@ $no = $offset + 1;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; z-index: 1000; }
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
@@ -80,7 +78,7 @@ $no = $offset + 1;
         <h4 class="text-white mb-4">Pelanggaran Siswa</h4>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
-            <li class="nav-item mb-1"><a href="kelola_guru.php" class="active" >Kelola Guru</a></li>
+            <li class="nav-item mb-1"><a href="kelola_guru.php" class="active">Kelola Guru</a></li>
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
@@ -96,7 +94,6 @@ $no = $offset + 1;
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- FORM HALAMAN PENUH -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Data Guru' : 'Tambah Data Guru'; ?></h2>
                 <a href="kelola_guru.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
@@ -139,7 +136,6 @@ $no = $offset + 1;
                 </form>
             </div></div>
         <?php else: ?>
-            <!-- TABEL UTAMA & PAGINATION -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Guru</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -184,7 +180,6 @@ $no = $offset + 1;
                     </table>
                 </div>
 
-                <!-- PAGINATION HALAMAN -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">

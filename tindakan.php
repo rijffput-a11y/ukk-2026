@@ -10,11 +10,6 @@ if (isset($_POST['simpan'])) {
     header("Location: tindakan.php"); exit();
 }
 
-if (isset($_GET['hapus'])) {
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE id='{$_GET['hapus']}'");
-    header("Location: tindakan.php"); exit();
-}
-
 $edit = isset($_GET['tindak']) ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa WHERE id='{$_GET['tindak']}'")) : null;
 
 $limit = 10;
@@ -24,11 +19,11 @@ $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 
 $where_arr = ["status != 'Selesai'"];
 if ($cari) { $where_arr[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')"; }
-
 $where = "WHERE " . implode(' AND ', $where_arr);
-$total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where"));
+
+$total = mysqli_num_rows(mysqli_query($koneksi, "SELECT id FROM t_pelanggaran_siswa $where"));
 $pages = ceil($total / $limit) ?: 1;
-$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY nama_kelas ASC, tanggal DESC LIMIT $offset, $limit");
+$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC, id DESC LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
 <!DOCTYPE html>
@@ -38,7 +33,7 @@ $no = $offset + 1;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; z-index: 1000; }
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
@@ -63,7 +58,6 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="tindakan.php" class="active">Tindakan</a></li>
             <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
             <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-            
             <?php 
             $user_id_sb = $_SESSION['user_id'];
             $q_chk_wk = mysqli_query($koneksi, "SELECT 1 FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id_sb' AND twk.status_aktif = 1");
@@ -71,7 +65,6 @@ $no = $offset + 1;
             ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
-
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
@@ -137,21 +130,18 @@ $no = $offset + 1;
                             <tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Pelanggaran</th><th>Poin</th><th>Tindakan</th><th>Status</th><th>Aksi</th></tr>
                         </thead>
                         <tbody>
-                            <?php if ($data && mysqli_num_rows($data) > 0): while($r = mysqli_fetch_assoc($data)): 
-                                $st = ($r['status'] == 'Pending') ? 'Diproses' : $r['status'];
-                            ?>
+                            <?php if ($data && mysqli_num_rows($data) > 0): while($r = mysqli_fetch_assoc($data)): ?>
                             <tr>
                                 <td class="text-center"><?= $no++; ?></td>
-                                <td class="text-center"><?= htmlspecialchars($r['tanggal']); ?></td>
+                                <td class="text-center small"><?= htmlspecialchars($r['tanggal']); ?></td>
                                 <td><?= htmlspecialchars($r['nama_siswa']); ?></td>
                                 <td><?= htmlspecialchars($r['nama_kelas']); ?></td>
                                 <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
-                                <td class="text-center"><strong><?= htmlspecialchars($r['poin']); ?></strong></td>
-                                <td><?= htmlspecialchars($r['tindakan'] ?? '-'); ?></td>
-                                <td class="text-center"><span class="badge bg-warning text-dark"><?= $st; ?></span></td>
+                                <td class="text-center"><strong><?= $r['poin']; ?></strong></td>
+                                <td class="text-center"><?= htmlspecialchars($r['tindakan'] ?? '-'); ?></td>
+                                <td class="text-center"><span class="badge bg-warning text-dark"><?= htmlspecialchars($r['status']); ?></span></td>
                                 <td class="text-center">
                                     <a href="?tindak=<?= $r['id']; ?>" class="btn btn-sm btn-primary">Tindak</a>
-                                    <a href="?hapus=<?= $r['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</a>
                                 </td>
                             </tr>
                             <?php endwhile; else: ?>
@@ -161,7 +151,6 @@ $no = $offset + 1;
                     </table>
                 </div>
 
-                <!-- PAGINATION SESUAI REFERENSI -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">

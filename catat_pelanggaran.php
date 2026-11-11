@@ -2,7 +2,9 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 
-if (isset($_POST['simpan'])) {
+$aksi = $_GET['aksi'] ?? '';
+
+if (isset($_POST['simpan_catatan'])) {
     $siswa_id = $_POST['siswa_id'];
     $pelanggaran_id = $_POST['pelanggaran_id'];
     $tanggal = date('Y-m-d');
@@ -16,20 +18,21 @@ if (isset($_POST['simpan'])) {
     $query_insert = "INSERT INTO t_pelanggaran_siswa (tahun_ajaran_id, siswa_id, nama_siswa, kelas_id, nama_kelas, pelanggaran_id, nama_pelanggaran, pelanggaran_kategori_id, guru_id, nama_guru, tanggal, poin, status, created_at, updated_at) VALUES ('" . ($ta['id'] ?? 2) . "', '$siswa_id', '{$s['n_sis']}', '" . ($s['k_id'] ?? 33) . "', '" . ($s['n_kls'] ?? 'XII RPL 2') . "', '$pelanggaran_id', '{$p['nama']}', '{$p['pelanggaran_kategori_id']}', '" . ($g['id'] ?? 1) . "', '" . ($g['nama'] ?? 'Administrator') . "', '$tanggal', '{$p['poin']}', 'Pending', NOW(), NOW())";
 
     if (mysqli_query($koneksi, $query_insert)) { header("Location: catat_pelanggaran.php?sukses=1"); exit(); }
-    else { echo "<script>alert('Gagal menyimpan.');</script>"; }
 }
 
-if (isset($_POST['tambah_pelanggaran_baru'])) {
-    $kat_id = $_POST['pelanggaran_kategori_id'];
-    $nama_p = mysqli_real_escape_string($koneksi, $_POST['nama_pelanggaran']);
-    $poin = (int)$_POST['poin'];
-    mysqli_query($koneksi, "INSERT INTO t_pelanggaran (pelanggaran_kategori_id, nama, poin, status_aktif, created_at, updated_at) VALUES ('$kat_id', '$nama_p', '$poin', '1', NOW(), NOW())");
-    header("Location: catat_pelanggaran.php?tambah_sukses=1"); exit();
-}
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+$h = max(1, (int)($_GET['halaman'] ?? 1));
+$offset = ($h - 1) * $limit;
+$cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
+
+$where = $cari ? "WHERE (nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')" : "";
+$total = mysqli_num_rows(mysqli_query($koneksi, "SELECT id FROM t_pelanggaran_siswa $where"));
+$pages = ceil($total / $limit) ?: 1;
+$data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY tanggal DESC, id DESC LIMIT $offset, $limit");
+$no = $offset + 1;
 
 $opt_s = mysqli_query($koneksi, "SELECT * FROM t_siswa ORDER BY nama ASC");
 $opt_p = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran WHERE status_aktif='1' ORDER BY nama ASC");
-$opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY nama ASC");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -40,11 +43,10 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
     <style>
         body { background: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; z-index: 1000; }
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
-        input[type="date"]::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
     </style>
 </head>
 <body>
@@ -56,7 +58,11 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
             <li class="nav-item mb-1"><a href="tindakan.php">Tindakan</a></li>
             <li class="nav-item mb-1"><a href="riwayat.php">Riwayat</a></li>
             <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-            <?php if (isset($_SESSION['is_wali_kelas']) && $_SESSION['is_wali_kelas'] === true): ?>
+            <?php 
+            $user_id_sb = $_SESSION['user_id'];
+            $q_chk_wk = mysqli_query($koneksi, "SELECT 1 FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id_sb' AND twk.status_aktif = 1");
+            if (($_SESSION['role'] === 'admin') || mysqli_num_rows($q_chk_wk) > 0): 
+            ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
@@ -65,79 +71,113 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
     </div>
 
     <div class="main-content">
-        <h2>Catat Pelanggaran Siswa</h2>
-        <hr>
-
-        <?php if (isset($_GET['sukses'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">Data pelanggaran berhasil dicatat!<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-        <?php endif; ?>
-        <?php if (isset($_GET['tambah_sukses'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">Jenis pelanggaran baru berhasil ditambahkan!<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-        <?php endif; ?>
-
-        <div class="card shadow-sm"><div class="card-body">
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Tanggal:</label>
-                    <input type="date" name="tanggal" class="form-control bg-light" value="<?= date('Y-m-d'); ?>" readonly style="cursor: not-allowed;">
-                    <small class="text-muted">Tanggal otomatis terset ke hari ini.</small>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Siswa:</label>
-                    <select name="siswa_id" class="form-control select2" required>
-                        <option value="">-- Cari & Pilih Siswa --</option>
-                        <?php while($s = mysqli_fetch_assoc($opt_s)): ?>
-                            <option value="<?= $s['id']; ?>"><?= $s['nis'].' - '.$s['nama']; ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <label class="form-label fw-bold mb-0">Pelanggaran:</label>
-                        <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalTambahPelanggaran">+ Tambah Pelanggaran Baru</button>
-                    </div>
-                    <select name="pelanggaran_id" class="form-control select2 mt-2" required>
-                        <option value="">-- Cari & Pilih Pelanggaran --</option>
-                        <?php while($p = mysqli_fetch_assoc($opt_p)): ?>
-                            <option value="<?= $p['id']; ?>"><?= $p['nama'].' (Poin: '.$p['poin'].')'; ?></option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-                <button type="submit" name="simpan" class="btn btn-primary">Simpan Pelanggaran</button>
-            </form>
-        </div></div>
-    </div>
-
-    <!-- MODAL TAMBAH PELANGGARAN -->
-    <div class="modal fade" id="modalTambahPelanggaran" tabindex="-1">
-        <div class="modal-dialog"><div class="modal-content">
-            <form method="POST">
-                <div class="modal-header"><h5 class="modal-title">Tambah Jenis Pelanggaran Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
+        <?php if ($aksi == 'tambah'): ?>
+            <!-- HALAMAN FORM TAMBAH -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Tambah Catat Pelanggaran</h2>
+                <a href="catat_pelanggaran.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
+            </div>
+            <hr>
+            <div class="card shadow-sm"><div class="card-body">
+                <form method="POST">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Kategori:</label>
-                        <select name="pelanggaran_kategori_id" class="form-control select2-modal" required style="width: 100%;">
-                            <option value="">-- Cari & Pilih Kategori --</option>
-                            <?php while($kat = mysqli_fetch_assoc($opt_kat)): ?>
-                                <option value="<?= $kat['id']; ?>"><?= $kat['nama']; ?></option>
+                        <label class="form-label fw-bold">Tanggal:</label>
+                        <input type="date" class="form-control bg-light" value="<?= date('Y-m-d'); ?>" readonly style="cursor: not-allowed;">
+                        <small class="text-muted">Otomatis hari, bulan, dan tahun hari ini.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Siswa:</label>
+                        <select name="siswa_id" class="form-control select2-siswa" required style="width: 100%;">
+                            <option value="">-- Cari & Pilih Siswa --</option>
+                            <?php while($s = mysqli_fetch_assoc($opt_s)): ?>
+                                <option value="<?= $s['id']; ?>"><?= $s['nis'].' - '.$s['nama']; ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Nama Pelanggaran:</label>
-                        <input type="text" name="nama_pelanggaran" class="form-control" placeholder="Contoh: Merokok" required>
+                        <label class="form-label fw-bold">Pelanggaran:</label>
+                        <select name="pelanggaran_id" class="form-control select2-pelanggaran" required style="width: 100%;">
+                            <option value="">-- Cari & Pilih Pelanggaran --</option>
+                            <?php while($p = mysqli_fetch_assoc($opt_p)): ?>
+                                <option value="<?= $p['id']; ?>"><?= $p['nama'].' (Poin: '.$p['poin'].')'; ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Poin:</label>
-                        <input type="number" name="poin" class="form-control" placeholder="Contoh: 15" required>
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="catat_pelanggaran.php" class="btn btn-secondary">Batal</a>
+                        <button type="submit" name="simpan_catatan" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div></div>
+
+        <?php else: ?>
+            <!-- HALAMAN UTAMA TABEL -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>Catat Pelanggaran Siswa</h2>
+                <a href="catat_pelanggaran.php?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
+            </div>
+            <hr>
+
+            <?php if (isset($_GET['sukses'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">Data pelanggaran berhasil dicatat!<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            <?php endif; ?>
+
+            <div class="card shadow-sm"><div class="card-body">
+                <div class="row mb-3 justify-content-between align-items-center">
+                    <div class="col-auto d-flex align-items-center">
+                        Tampilkan 
+                        <select name="limit" class="form-select form-select-sm mx-2" style="width: 70px;" onchange="location = this.value;">
+                            <option value="?limit=10&cari=<?= $cari; ?>" <?= $limit == 10 ? 'selected' : ''; ?>>10</option>
+                            <option value="?limit=25&cari=<?= $cari; ?>" <?= $limit == 25 ? 'selected' : ''; ?>>25</option>
+                        </select> data
+                    </div>
+                    <div class="col-auto">
+                        <form method="GET" class="d-flex align-items-center">
+                            <input type="hidden" name="limit" value="<?= $limit; ?>">
+                            <span class="me-2">Cari:</span>
+                            <input type="text" name="cari" class="form-control form-control-sm" value="<?= htmlspecialchars($cari); ?>" onchange="this.form.submit()">
+                        </form>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" name="tambah_pelanggaran_baru" class="btn btn-success">Simpan</button>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr><th>No</th><th>Tanggal</th><th>Siswa</th><th>Kelas</th><th>Pelanggaran</th><th>Poin</th><th>Pelapor</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <?php while($r = mysqli_fetch_assoc($data)): ?>
+                            <tr>
+                                <td><?= $no++; ?></td>
+                                <td><?= htmlspecialchars($r['tanggal']); ?></td>
+                                <td><?= htmlspecialchars($r['nama_siswa']); ?></td>
+                                <td><?= htmlspecialchars($r['nama_kelas']); ?></td>
+                                <td><?= htmlspecialchars($r['nama_pelanggaran']); ?></td>
+                                <td><strong><?= htmlspecialchars($r['poin']); ?></strong></td>
+                                <td><?= htmlspecialchars($r['nama_guru']); ?></td>
+                                <td><span class="badge bg-warning text-dark"><?= htmlspecialchars($r['status']); ?></span></td>
+                            </tr>
+                            <?php endwhile; if(!$total): ?>
+                            <tr><td colspan="8" class="text-center text-muted">Belum ada data catatan pelanggaran.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-        </div></div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&limit=<?= $limit; ?>&cari=<?= $cari; ?>">Pertama</a></li>
+                        <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&limit=<?= $limit; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
+                        <?php for($i=1; $i<=$pages; $i++): ?>
+                            <li class="page-item <?= $h == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&limit=<?= $limit; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
+                        <?php endfor; ?>
+                        <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h+1; ?>&limit=<?= $limit; ?>&cari=<?= $cari; ?>">Berikutnya</a></li>
+                        <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $pages; ?>&limit=<?= $limit; ?>&cari=<?= $cari; ?>">Terakhir</a></li>
+                    </ul>
+                </div>
+            </div></div>
+        <?php endif; ?>
     </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -145,11 +185,8 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() { 
-        $('.select2').select2({ theme: 'bootstrap-5', width: '100%' }); 
-        // Mengaktifkan select2 di dalam modal agar bisa dicari
-        $('#modalTambahPelanggaran').on('shown.bs.modal', function () {
-            $('.select2-modal').select2({ theme: 'bootstrap-5', width: '100%', dropdownParent: $('#modalTambahPelanggaran') });
-        });
+        $('.select2-siswa').select2({ theme: 'bootstrap-5', width: '100%' });
+        $('.select2-pelanggaran').select2({ theme: 'bootstrap-5', width: '100%' });
     });
 </script>
 </body>

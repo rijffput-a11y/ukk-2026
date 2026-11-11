@@ -2,15 +2,29 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 
+$user_id = $_SESSION['user_id'];
+$role = $_SESSION['role'] ?? '';
+$guru_id = null;
+
+if ($role !== 'admin') {
+    $q_guru = mysqli_query($koneksi, "SELECT id FROM t_guru WHERE user_id='$user_id' LIMIT 1");
+    if ($d_guru = mysqli_fetch_assoc($q_guru)) { $guru_id = $d_guru['id']; }
+}
+
 $limit = 10;
 $h = max(1, (int)($_GET['halaman'] ?? 1));
 $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 
-$where_clauses = ["status = 'Selesai'"];
-if ($cari) { $where_clauses[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')"; }
+$where_arr = ["status = 'Selesai'"];
+if ($role !== 'admin') {
+    $where_arr[] = $guru_id ? "guru_id = '$guru_id'" : "1 = 0";
+}
+if ($cari) { 
+    $where_arr[] = "(nama_siswa LIKE '%$cari%' OR nama_kelas LIKE '%$cari%' OR nama_pelanggaran LIKE '%$cari%')"; 
+}
 
-$where = "WHERE " . implode(' AND ', $where_clauses);
+$where = "WHERE " . implode(' AND ', $where_arr);
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_siswa $where"));
 $pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_siswa $where ORDER BY nama_kelas ASC, tanggal DESC LIMIT $offset, $limit");
@@ -23,7 +37,7 @@ $no = $offset + 1;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f8f9fa; }
-        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; }
+        .sidebar { min-height: 100vh; background: #212529; color: #fff; position: fixed; width: 250px; top: 0; left: 0; z-index: 1000; }
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
@@ -48,7 +62,6 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="tindakan.php">Tindakan</a></li>
             <li class="nav-item mb-1"><a href="riwayat.php" class="active">Riwayat</a></li>
             <li class="nav-item mb-1"><a href="rekap_poin.php">Rekap Poin</a></li>
-            
             <?php 
             $user_id_sb = $_SESSION['user_id'];
             $q_chk_wk = mysqli_query($koneksi, "SELECT 1 FROM t_wali_kelas twk JOIN t_guru tg ON twk.guru_id = tg.id WHERE tg.user_id = '$user_id_sb' AND twk.status_aktif = 1");
@@ -56,7 +69,6 @@ $no = $offset + 1;
             ?>
                 <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <?php endif; ?>
-
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
         </ul>
         <hr><a href="logout.php" class="text-danger">Logout</a>
@@ -99,7 +111,6 @@ $no = $offset + 1;
                 </table>
             </div>
 
-            <!-- PAGINATION SESUAI REFERENSI -->
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                 <ul class="pagination pagination-sm mb-0">
