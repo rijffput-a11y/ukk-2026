@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
 if (isset($_POST['simpan'])) {
     $siswa_id = $_POST['siswa_id'];
     $pelanggaran_id = $_POST['pelanggaran_id'];
-    $tanggal = $_POST['tanggal'];
+    $tanggal = date('Y-m-d');
     $user_id = $_SESSION['user_id'];
 
     $s = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT s.nama AS n_sis, k.id AS k_id, k.nama AS n_kls FROM t_siswa s LEFT JOIN t_kelas_siswa ks ON s.id=ks.siswa_id LEFT JOIN t_kelas k ON ks.kelas_id=k.id WHERE s.id='$siswa_id' LIMIT 1"));
@@ -44,6 +44,7 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
         .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
         .sidebar a:hover, .sidebar a.active { color: #fff; background: #0d6efd; }
         .main-content { margin-left: 250px; padding: 20px; }
+        input[type="date"]::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
     </style>
 </head>
 <body>
@@ -78,7 +79,8 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label fw-bold">Tanggal:</label>
-                    <input type="date" name="tanggal" class="form-control" value="<?= date('Y-m-d'); ?>" required>
+                    <input type="date" name="tanggal" class="form-control bg-light" value="<?= date('Y-m-d'); ?>" readonly style="cursor: not-allowed;">
+                    <small class="text-muted">Tanggal otomatis terset ke hari ini.</small>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">Siswa:</label>
@@ -114,8 +116,8 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori:</label>
-                        <select name="pelanggaran_kategori_id" class="form-control" required>
-                            <option value="">-- Pilih Kategori --</option>
+                        <select name="pelanggaran_kategori_id" class="form-control select2-modal" required style="width: 100%;">
+                            <option value="">-- Cari & Pilih Kategori --</option>
                             <?php while($kat = mysqli_fetch_assoc($opt_kat)): ?>
                                 <option value="<?= $kat['id']; ?>"><?= $kat['nama']; ?></option>
                             <?php endwhile; ?>
@@ -142,7 +144,13 @@ $opt_kat = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori ORDER BY
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    $(document).ready(function() { $('.select2').select2({ theme: 'bootstrap-5', width: '100%' }); });
+    $(document).ready(function() { 
+        $('.select2').select2({ theme: 'bootstrap-5', width: '100%' }); 
+        // Mengaktifkan select2 di dalam modal agar bisa dicari
+        $('#modalTambahPelanggaran').on('shown.bs.modal', function () {
+            $('.select2-modal').select2({ theme: 'bootstrap-5', width: '100%', dropdownParent: $('#modalTambahPelanggaran') });
+        });
+    });
 </script>
 </body>
 </html>

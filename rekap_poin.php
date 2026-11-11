@@ -98,11 +98,17 @@ $no = $offset + 1;
                 </tbody>
             </table>
 
+            <!-- PAGINATION SESUAI REFERENSI -->
             <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">Hal <?= $halaman; ?> dari <?= $pages; ?></small>
+                <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                 <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item <?= $halaman <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
                     <li class="page-item <?= $halaman <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $halaman-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
+                    <?php for($i=1; $i<=$pages; $i++): ?>
+                        <li class="page-item <?= $halaman == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
+                    <?php endfor; ?>
                     <li class="page-item <?= $halaman >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $halaman+1; ?>&cari=<?= $cari; ?>">Berikutnya</a></li>
+                    <li class="page-item <?= $halaman >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $pages; ?>&cari=<?= $cari; ?>">Terakhir</a></li>
                 </ul>
             </div>
         </div></div>
