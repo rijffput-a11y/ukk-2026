@@ -81,7 +81,7 @@ if ($role === 'admin') {
             <div class="col-md-6 d-flex gap-2">
                 <button type="submit" class="btn btn-primary btn-sm">Filter</button>
                 <a href="laporan.php" class="btn btn-secondary btn-sm">Reset</a>
-                <button type="button" onclick="window.print()" class="btn btn-success btn-sm ms-auto">Cetak PDF</button>
+                <button type="button" onclick="window.print()" class="btn btn-success btn-sm ms-auto">Cetak</button>
                 <button type="button" onclick="exportExcel()" class="btn btn-warning btn-sm text-dark">Export Excel</button>
             </div>
         </form>
