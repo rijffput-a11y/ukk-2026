@@ -10,6 +10,14 @@ if (isset($_POST['simpan'])) {
     $poin = (int)$_POST['poin'];
     $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
     
+    // Validasi duplikasi: Kode atau Nama Pelanggaran tidak boleh sama
+    $dup = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran WHERE (kode='$kode' OR nama='$nama')" . ($id ? " AND id != '$id'" : ""));
+    if (mysqli_num_rows($dup) > 0) {
+        $row = mysqli_fetch_assoc($dup);
+        $msg = ($row['kode'] === $kode) ? "Kode Pelanggaran sudah terdaftar!" : "Nama Pelanggaran sudah terdaftar!";
+        echo "<script>alert('Gagal: $msg'); window.history.back();</script>"; exit();
+    }
+    
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_pelanggaran SET pelanggaran_kategori_id='$kid', kode='$kode', nama='$nama', poin='$poin', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
     } else {
@@ -26,12 +34,9 @@ if (isset($_GET['hapus'])) {
 }
 
 $aksi = $_GET['aksi'] ?? '';
-$edit_id = $_GET['edit'] ?? '';
-$edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran WHERE id='$edit_id'")) : null;
+$edit = ($_GET['edit'] ?? '') ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran WHERE id='{$_GET['edit']}'")) : null;
 
-$limit = 10;
-$h = max(1, (int)($_GET['halaman'] ?? 1));
-$offset = ($h - 1) * $limit;
+$limit = 10; $h = max(1, (int)($_GET['halaman'] ?? 1)); $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE tp.kode LIKE '%$cari%' OR tp.nama LIKE '%$cari%' OR pk.nama LIKE '%$cari%'" : "";
 

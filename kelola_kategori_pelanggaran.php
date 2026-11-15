@@ -2,12 +2,17 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $desc = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
     $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
+    
+    // Validasi duplikasi Nama Kategori
+    $dup = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHERE nama='$nama'" . ($id ? " AND id != '$id'" : ""));
+    if (mysqli_num_rows($dup) > 0) {
+        echo "<script>alert('Gagal: Nama Kategori Pelanggaran sudah terdaftar!'); window.history.back();</script>"; exit();
+    }
     
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_pelanggaran_kategori SET nama='$nama', deskripsi='$desc', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
@@ -17,27 +22,22 @@ if (isset($_POST['simpan'])) {
     header("Location: kelola_kategori_pelanggaran.php"); exit();
 }
 
-// 2. PROSES HAPUS (BERSIHKAN RELASI KE t_pelanggaran)
 if (isset($_GET['hapus'])) {
     $id_kat = $_GET['hapus'];
-    // Disesuaikan dengan nama tabel yang benar: t_pelanggaran
     mysqli_query($koneksi, "DELETE FROM t_pelanggaran WHERE pelanggaran_kategori_id='$id_kat'");
     mysqli_query($koneksi, "DELETE FROM t_pelanggaran_kategori WHERE id='$id_kat'");
     header("Location: kelola_kategori_pelanggaran.php"); exit();
 }
 
 $aksi = $_GET['aksi'] ?? '';
-$edit_id = $_GET['edit'] ?? '';
-$edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHERE id='$edit_id'")) : null;
+$edit = ($_GET['edit'] ?? '') ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori WHERE id='{$_GET['edit']}'")) : null;
 
-$limit = 10;
-$h = max(1, (int)($_GET['halaman'] ?? 1));
-$offset = ($h - 1) * $limit; // Diperbaiki dari typo sebelumnya (- $offset = ($h 1))
+$limit = 10; $h = max(1, (int)($_GET['halaman'] ?? 1)); $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE nama LIKE '%$cari%'" : "";
 
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_pelanggaran_kategori $where"));
-$pages = ceil($total / $limit);
+$pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_pelanggaran_kategori $where LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -65,7 +65,7 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
-            <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php" class="active" >Kelola Kategori Pelanggaran</a></li>
+            <li class="nav-item mb-1"><a href="kelola_kategori_pelanggaran.php" class="active">Kelola Kategori Pelanggaran</a></li>
             <li class="nav-item mb-1"><a href="kelola_jenis_pelanggaran.php">Kelola Jenis Pelanggaran</a></li>
             <li class="nav-item mb-1"><a href="laporan.php">Laporan</a></li>
             <li class="nav-item mb-1"><a href="about_me.php">About Me</a></li>
@@ -75,27 +75,22 @@ $no = $offset + 1;
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- ================= FORM HALAMAN PENUH ================= -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Kategori Pelanggaran' : 'Tambah Kategori Pelanggaran'; ?></h2>
                 <a href="kelola_kategori_pelanggaran.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
             </div>
             <hr>
-
             <div class="card shadow-sm"><div class="card-body">
                 <form method="POST">
                     <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
-                    
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Kategori:</label>
                         <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Deskripsi:</label>
                         <textarea name="deskripsi" class="form-control" rows="3"><?= htmlspecialchars($edit['deskripsi'] ?? ''); ?></textarea>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Status Aktif:</label>
                         <select name="status_aktif" class="form-control" required>
@@ -103,7 +98,6 @@ $no = $offset + 1;
                             <option value="Tidak Aktif" <?= (($edit['status_aktif'] ?? 1) == 0 || ($edit['status_aktif'] ?? '') == 'Tidak Aktif') ? 'selected' : ''; ?>>Tidak Aktif</option>
                         </select>
                     </div>
-
                     <hr>
                     <div class="d-flex justify-content-end">
                         <a href="kelola_kategori_pelanggaran.php" class="btn btn-secondary me-2">Batal</a>
@@ -111,9 +105,7 @@ $no = $offset + 1;
                     </div>
                 </form>
             </div></div>
-
         <?php else: ?>
-            <!-- ================= TABEL UTAMA ================= -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Kategori Pelanggaran</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -129,7 +121,6 @@ $no = $offset + 1;
                         </form>
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped align-middle">
                         <thead class="table-dark">
@@ -157,8 +148,6 @@ $no = $offset + 1;
                         </tbody>
                     </table>
                 </div>
-
-                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">
@@ -174,7 +163,6 @@ $no = $offset + 1;
             </div></div>
         <?php endif; ?>
     </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

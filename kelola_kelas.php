@@ -2,7 +2,6 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
@@ -10,6 +9,11 @@ if (isset($_POST['simpan'])) {
     $jurusan = mysqli_real_escape_string($koneksi, $_POST['jurusan']);
     $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
     
+    $dup = mysqli_query($koneksi, "SELECT * FROM t_kelas WHERE nama='$nama'" . ($id ? " AND id != '$id'" : ""));
+    if (mysqli_num_rows($dup) > 0) {
+        echo "<script>alert('Gagal: Nama Kelas sudah terdaftar!'); window.history.back();</script>"; exit();
+    }
+
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_kelas SET nama='$nama', tingkat='$tingkat', jurusan='$jurusan', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
     } else {
@@ -18,28 +22,22 @@ if (isset($_POST['simpan'])) {
     header("Location: kelola_kelas.php"); exit();
 }
 
-// 2. PROSES HAPUS (BERSIHKAN RELASI FOREIGN KEY)
 if (isset($_GET['hapus'])) {
-    $id_kelas = $_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE kelas_id='$id_kelas'");
-    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE kelas_id='$id_kelas'");
-    mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE kelas_id='$id_kelas'");
-    mysqli_query($koneksi, "DELETE FROM t_kelas WHERE id='$id_kelas'");
+    $id_k = $_GET['hapus'];
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE kelas_id='$id_k'");
+    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE kelas_id='$id_k'");
+    mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE kelas_id='$id_k'");
+    mysqli_query($koneksi, "DELETE FROM t_kelas WHERE id='$id_k'");
     header("Location: kelola_kelas.php"); exit();
 }
 
 $aksi = $_GET['aksi'] ?? '';
-$edit_id = $_GET['edit'] ?? '';
-$edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_kelas WHERE id='$edit_id'")) : null;
-
-$limit = 10;
-$h = max(1, (int)($_GET['halaman'] ?? 1));
-$offset = ($h - 1) * $limit;
+$edit = ($_GET['edit'] ?? '') ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_kelas WHERE id='{$_GET['edit']}'")) : null;
+$limit = 10; $h = max(1, (int)($_GET['halaman'] ?? 1)); $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE nama LIKE '%$cari%' OR tingkat LIKE '%$cari%' OR jurusan LIKE '%$cari%'" : "";
-
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_kelas $where"));
-$pages = ceil($total / $limit);
+$pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_kelas $where LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -63,7 +61,7 @@ $no = $offset + 1;
             <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
             <li class="nav-item mb-1"><a href="kelola_siswa.php">Kelola Siswa</a></li>
-            <li class="nav-item mb-1"><a href="kelola_kelas.php" class="active" >Kelola Kelas</a></li>
+            <li class="nav-item mb-1"><a href="kelola_kelas.php" class="active">Kelola Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_wali_kelas.php">Kelola Wali Kelas</a></li>
@@ -77,32 +75,26 @@ $no = $offset + 1;
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- ================= FORM HALAMAN PENUH ================= -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Data Kelas' : 'Tambah Data Kelas'; ?></h2>
                 <a href="kelola_kelas.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
             </div>
             <hr>
-
             <div class="card shadow-sm"><div class="card-body">
                 <form method="POST">
                     <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
-                    
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Kelas:</label>
-                        <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" required>
+                        <input type="text" name="nama" id="inputNama" class="form-control" value="<?= htmlspecialchars($edit['nama'] ?? ''); ?>" placeholder="Contoh: XII RPL 2 atau XII BD 3" required>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tingkat:</label>
-                        <input type="text" name="tingkat" class="form-control" value="<?= htmlspecialchars($edit['tingkat'] ?? ''); ?>" placeholder="Contoh: XII">
+                        <input type="text" name="tingkat" id="inputTingkat" class="form-control" value="<?= htmlspecialchars($edit['tingkat'] ?? ''); ?>" placeholder="Contoh: XII">
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Jurusan:</label>
-                        <input type="text" name="jurusan" class="form-control" value="<?= htmlspecialchars($edit['jurusan'] ?? ''); ?>" placeholder="Contoh: RPL">
+                        <input type="text" name="jurusan" id="inputJurusan" class="form-control" value="<?= htmlspecialchars($edit['jurusan'] ?? ''); ?>" placeholder="Contoh: RPL / BD">
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Status Aktif:</label>
                         <select name="status_aktif" class="form-control" required>
@@ -110,7 +102,6 @@ $no = $offset + 1;
                             <option value="Tidak Aktif" <?= (($edit['status_aktif'] ?? 1) == 0 || ($edit['status_aktif'] ?? '') == 'Tidak Aktif') ? 'selected' : ''; ?>>Tidak Aktif</option>
                         </select>
                     </div>
-
                     <hr>
                     <div class="d-flex justify-content-end">
                         <a href="kelola_kelas.php" class="btn btn-secondary me-2">Batal</a>
@@ -118,9 +109,7 @@ $no = $offset + 1;
                     </div>
                 </form>
             </div></div>
-
         <?php else: ?>
-            <!-- ================= TABEL UTAMA ================= -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Kelas</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -136,7 +125,6 @@ $no = $offset + 1;
                         </form>
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped align-middle">
                         <thead class="table-dark">
@@ -165,8 +153,6 @@ $no = $offset + 1;
                         </tbody>
                     </table>
                 </div>
-
-                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">
@@ -184,5 +170,18 @@ $no = $offset + 1;
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Script otomatis mengisi tingkat dan jurusan berdasarkan nama kelas (misal: XII BD 3 -> tingkat: XII, jurusan: BD)
+    document.getElementById('inputNama')?.addEventListener('input', function() {
+        const val = this.value.trim();
+        const parts = val.split(/\s+/);
+        if (parts.length > 0) {
+            document.getElementById('inputTingkat').value = parts[0]; // Kata pertama (misal: XII)
+        }
+        if (parts.length > 1) {
+            document.getElementById('inputJurusan').value = parts[1]; // Kata kedua (misal: BD atau RPL)
+        }
+    });
+</script>
 </body>
 </html>

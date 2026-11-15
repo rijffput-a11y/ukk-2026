@@ -2,15 +2,21 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $gid = $_POST['guru_id'];
     $kid = $_POST['kelas_id'];
     
-    // Ambil tahun ajaran yang sedang aktif secara otomatis
     $ta_aktif = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT id FROM t_tahun_ajaran WHERE status_aktif=1 LIMIT 1"));
     $tid = $ta_aktif['id'] ?? 1;
+    
+    // Cek duplikasi: Guru sudah jadi wali kelas lain ATAU kelas sudah punya wali kelas di tahun ajaran aktif
+    $dup = mysqli_query($koneksi, "SELECT * FROM t_wali_kelas WHERE tahun_ajaran_id='$tid' AND (guru_id='$gid' OR kelas_id='$kid')" . ($id ? " AND id != '$id'" : ""));
+    if (mysqli_num_rows($dup) > 0) {
+        $row = mysqli_fetch_assoc($dup);
+        $msg = ($row['guru_id'] == $gid) ? "Guru ini sudah menjadi wali kelas di kelas lain!" : "Kelas ini sudah memiliki wali kelas!";
+        echo "<script>alert('Gagal: $msg'); window.history.back();</script>"; exit();
+    }
     
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_wali_kelas SET guru_id='$gid', kelas_id='$kid', tahun_ajaran_id='$tid', updated_at=NOW() WHERE id='$id'");
@@ -20,19 +26,15 @@ if (isset($_POST['simpan'])) {
     header("Location: kelola_wali_kelas.php"); exit();
 }
 
-// 2. PROSES HAPUS
 if (isset($_GET['hapus'])) {
     mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE id='{$_GET['hapus']}'");
     header("Location: kelola_wali_kelas.php"); exit();
 }
 
 $aksi = $_GET['aksi'] ?? '';
-$edit_id = $_GET['edit'] ?? '';
-$edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_wali_kelas WHERE id='$edit_id'")) : null;
+$edit = ($_GET['edit'] ?? '') ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_wali_kelas WHERE id='{$_GET['edit']}'")) : null;
 
-$limit = 10;
-$h = max(1, (int)($_GET['halaman'] ?? 1));
-$offset = ($h - 1) * $limit;
+$limit = 10; $h = max(1, (int)($_GET['halaman'] ?? 1)); $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE tg.nama LIKE '%$cari%' OR tk.nama LIKE '%$cari%' OR ta.nama LIKE '%$cari%'" : "";
 
@@ -86,11 +88,9 @@ $ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_a
                 <a href="kelola_wali_kelas.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
             </div>
             <hr>
-
             <div class="card shadow-sm"><div class="card-body">
                 <form method="POST">
                     <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
-                    
                     <div class="mb-3">
                         <label class="form-label fw-bold">Pilih Guru:</label>
                         <select name="guru_id" class="form-control select2" required>
@@ -100,7 +100,6 @@ $ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_a
                             <?php endwhile; ?>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Pilih Kelas:</label>
                         <select name="kelas_id" class="form-control select2" required>
@@ -110,13 +109,11 @@ $ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_a
                             <?php endwhile; ?>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label fw-bold">Tahun Ajaran Aktif:</label>
                         <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($ta_default['nama'] ?? 'Tidak ada tahun ajaran aktif'); ?>" disabled>
                         <small class="text-muted">Tahun ajaran otomatis mengikuti status aktif saat ini.</small>
                     </div>
-
                     <hr>
                     <div class="d-flex justify-content-end">
                         <a href="kelola_wali_kelas.php" class="btn btn-secondary me-2">Batal</a>
@@ -124,7 +121,6 @@ $ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_a
                     </div>
                 </form>
             </div></div>
-
         <?php else: ?>
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Wali Kelas</h2>
@@ -141,7 +137,6 @@ $ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_a
                         </form>
                     </div>
                 </div>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped align-middle">
                         <thead class="table-dark">
@@ -165,15 +160,13 @@ $ta_default = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_tahun_a
                         </tbody>
                     </table>
                 </div>
-
-                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">
                         <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=1&cari=<?= $cari; ?>">Pertama</a></li>
                         <li class="page-item <?= $h <= 1 ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h-1; ?>&cari=<?= $cari; ?>">Sebelumnya</a></li>
                         <?php for($i=1; $i<=$pages; $i++): ?>
-                        <li class="page-item <?= $h == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
+                            <li class="page-item <?= $h == $i ? 'active' : ''; ?>"><a class="page-link" href="?halaman=<?= $i; ?>&cari=<?= $cari; ?>"><?= $i; ?></a></li>
                         <?php endfor; ?>
                         <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $h+1; ?>&cari=<?= $cari; ?>">Berikutnya</a></li>
                         <li class="page-item <?= $h >= $pages ? 'disabled' : ''; ?>"><a class="page-link" href="?halaman=<?= $pages; ?>&cari=<?= $cari; ?>">Terakhir</a></li>

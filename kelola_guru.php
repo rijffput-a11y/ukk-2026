@@ -12,23 +12,30 @@ if (isset($_POST['simpan'])) {
     $konfirmasi = $_POST['konfirmasi_password'];
 
     if (!empty($password) && $password !== $konfirmasi) {
-        echo "<script>alert('Konfirmasi password tidak cocok!'); window.history.back();</script>";
-        exit();
+        echo "<script>alert('Konfirmasi password tidak cocok!'); window.history.back();</script>"; exit();
     }
     
+    // Cek duplikasi NIP, Nama, atau Email
+    $cek_dup = "SELECT * FROM t_guru WHERE (nip='$nip' OR nama='$nama' OR email='$email') " . ($id ? "AND id != '$id'" : "");
+    $res_dup = mysqli_query($koneksi, $cek_dup);
+    if (mysqli_num_rows($res_dup) > 0) {
+        $row = mysqli_fetch_assoc($res_dup);
+        $pesan = ($row['nip'] === $nip) ? "NIP sudah terdaftar!" : (($row['nama'] === $nama) ? "Nama Guru sudah terdaftar!" : "Email sudah terdaftar!");
+        echo "<script>alert('Gagal: $pesan'); window.history.back();</script>"; exit();
+    }
+
     if ($id) {
         $d_old = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT user_id FROM t_guru WHERE id='$id'"));
         mysqli_query($koneksi, "UPDATE t_guru SET nip='$nip', nama='$nama', email='$email', status_aktif='$status' WHERE id='$id'");
-        
         if ($d_old['user_id']) {
-            $pass_query = !empty($password) ? ", password='".password_hash($password, PASSWORD_DEFAULT)."'" : "";
-            mysqli_query($koneksi, "UPDATE t_users SET name='$nama', email='$email' $pass_query WHERE id='{$d_old['user_id']}'");
+            $pass_q = !empty($password) ? ", password='".password_hash($password, PASSWORD_DEFAULT)."'" : "";
+            mysqli_query($koneksi, "UPDATE t_users SET name='$nama', email='$email' $pass_q WHERE id='{$d_old['user_id']}'");
         }
     } else {
         $hashed = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : password_hash('123456', PASSWORD_DEFAULT);
         mysqli_query($koneksi, "INSERT INTO t_users (name, email, password, role) VALUES ('$nama', '$email', '$hashed', 'guru')");
-        $user_id_baru = mysqli_insert_id($koneksi);
-        mysqli_query($koneksi, "INSERT INTO t_guru (nip, nama, email, status_aktif, user_id) VALUES ('$nip', '$nama', '$email', '$status', '$user_id_baru')");
+        $u_id = mysqli_insert_id($koneksi);
+        mysqli_query($koneksi, "INSERT INTO t_guru (nip, nama, email, status_aktif, user_id) VALUES ('$nip', '$nama', '$email', '$status', '$u_id')");
     }
     header("Location: kelola_guru.php"); exit();
 }
@@ -36,13 +43,10 @@ if (isset($_POST['simpan'])) {
 if (isset($_GET['hapus'])) {
     $id_guru = $_GET['hapus'];
     $get_guru = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT user_id FROM t_guru WHERE id='$id_guru'"));
-    
     mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE guru_id='$id_guru'");
     mysqli_query($koneksi, "DELETE FROM t_wali_kelas WHERE guru_id='$id_guru'");
     mysqli_query($koneksi, "DELETE FROM t_guru WHERE id='$id_guru'");
-    if ($get_guru['user_id']) {
-        mysqli_query($koneksi, "DELETE FROM t_users WHERE id='{$get_guru['user_id']}'");
-    }
+    if ($get_guru['user_id']) { mysqli_query($koneksi, "DELETE FROM t_users WHERE id='{$get_guru['user_id']}'"); }
     header("Location: kelola_guru.php"); exit();
 }
 

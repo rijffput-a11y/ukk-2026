@@ -2,7 +2,6 @@
 require_once 'koneksi.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: login.php"); exit(); }
 
-// 1. PROSES SIMPAN (TAMBAH / EDIT)
 if (isset($_POST['simpan'])) {
     $id = $_POST['id'];
     $nis = mysqli_real_escape_string($koneksi, $_POST['nis']);
@@ -13,6 +12,13 @@ if (isset($_POST['simpan'])) {
     $alamat = mysqli_real_escape_string($koneksi, $_POST['alamat']);
     $status = $_POST['status_aktif'] == 'Aktif' ? 1 : 0;
     
+    $dup = mysqli_query($koneksi, "SELECT * FROM t_siswa WHERE (nis='$nis' OR nisn='$nisn' OR nama='$nama')" . ($id ? " AND id != '$id'" : ""));
+    if (mysqli_num_rows($dup) > 0) {
+        $r = mysqli_fetch_assoc($dup);
+        $msg = ($r['nis'] === $nis) ? "NIS sudah terdaftar!" : (($r['nisn'] === $nisn) ? "NISN sudah terdaftar!" : "Nama Siswa sudah terdaftar!");
+        echo "<script>alert('Gagal: $msg'); window.history.back();</script>"; exit();
+    }
+
     if ($id) {
         mysqli_query($koneksi, "UPDATE t_siswa SET nis='$nis', nisn='$nisn', nama='$nama', jenis_kelamin='$jk', tanggal_lahir='$tgl', alamat='$alamat', status_aktif='$status', updated_at=NOW() WHERE id='$id'");
     } else {
@@ -21,27 +27,21 @@ if (isset($_POST['simpan'])) {
     header("Location: kelola_siswa.php"); exit();
 }
 
-// 2. PROSES HAPUS (BERSIHKAN RELASI)
 if (isset($_GET['hapus'])) {
-    $id_siswa = $_GET['hapus'];
-    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE siswa_id='$id_siswa'");
-    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE siswa_id='$id_siswa'");
-    mysqli_query($koneksi, "DELETE FROM t_siswa WHERE id='$id_siswa'");
+    $id_s = $_GET['hapus'];
+    mysqli_query($koneksi, "DELETE FROM t_pelanggaran_siswa WHERE siswa_id='$id_s'");
+    mysqli_query($koneksi, "DELETE FROM t_kelas_siswa WHERE siswa_id='$id_s'");
+    mysqli_query($koneksi, "DELETE FROM t_siswa WHERE id='$id_s'");
     header("Location: kelola_siswa.php"); exit();
 }
 
 $aksi = $_GET['aksi'] ?? '';
-$edit_id = $_GET['edit'] ?? '';
-$edit = $edit_id ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_siswa WHERE id='$edit_id'")) : null;
-
-$limit = 10;
-$h = max(1, (int)($_GET['halaman'] ?? 1));
-$offset = ($h - 1) * $limit;
+$edit = ($_GET['edit'] ?? '') ? mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM t_siswa WHERE id='{$_GET['edit']}'")) : null;
+$limit = 10; $h = max(1, (int)($_GET['halaman'] ?? 1)); $offset = ($h - 1) * $limit;
 $cari = mysqli_real_escape_string($koneksi, $_GET['cari'] ?? '');
 $where = $cari ? "WHERE nis LIKE '%$cari%' OR nisn LIKE '%$cari%' OR nama LIKE '%$cari%'" : "";
-
 $total = mysqli_num_rows(mysqli_query($koneksi, "SELECT 1 FROM t_siswa $where"));
-$pages = ceil($total / $limit);
+$pages = ceil($total / $limit) ?: 1;
 $data = mysqli_query($koneksi, "SELECT * FROM t_siswa $where LIMIT $offset, $limit");
 $no = $offset + 1;
 ?>
@@ -64,7 +64,7 @@ $no = $offset + 1;
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item mb-1"><a href="dashboard.php">Dashboard</a></li>
             <li class="nav-item mb-1"><a href="kelola_guru.php">Kelola Guru</a></li>
-            <li class="nav-item mb-1"><a href="kelola_siswa.php"  class="active" >Kelola Siswa</a></li>
+            <li class="nav-item mb-1"><a href="kelola_siswa.php" class="active">Kelola Siswa</a></li>
             <li class="nav-item mb-1"><a href="kelola_kelas.php">Kelola Kelas</a></li>
             <li class="nav-item mb-1"><a href="kelola_tahun_ajaran.php">Kelola Tahun Ajaran</a></li>
             <li class="nav-item mb-1"><a href="penempatan_siswa.php">Penempatan Siswa</a></li>
@@ -79,7 +79,6 @@ $no = $offset + 1;
 
     <div class="main-content">
         <?php if ($aksi === 'tambah' || $edit): ?>
-            <!-- FORM HALAMAN PENUH -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2><?= $edit ? 'Edit Data Siswa' : 'Tambah Data Siswa'; ?></h2>
                 <a href="kelola_siswa.php" class="btn btn-secondary btn-sm">&larr; Kembali</a>
@@ -90,11 +89,11 @@ $no = $offset + 1;
                     <input type="hidden" name="id" value="<?= $edit['id'] ?? ''; ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold">NIS (Maks. 8 Angka):</label>
-                        <input type="text" name="nis" class="form-control" value="<?= htmlspecialchars($edit['nis'] ?? ''); ?>" maxlength="8" pattern="\d{1,8}" required>
+                        <input type="text" name="nis" class="form-control" value="<?= htmlspecialchars($edit['nis'] ?? ''); ?>" maxlength="8" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">NISN (Maks. 10 Angka):</label>
-                        <input type="text" name="nisn" class="form-control" value="<?= htmlspecialchars($edit['nisn'] ?? ''); ?>" maxlength="10" pattern="\d{1,10}">
+                        <input type="text" name="nisn" class="form-control" value="<?= htmlspecialchars($edit['nisn'] ?? ''); ?>" maxlength="10">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Siswa:</label>
@@ -129,7 +128,6 @@ $no = $offset + 1;
                 </form>
             </div></div>
         <?php else: ?>
-            <!-- TABEL UTAMA -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2>Kelola Siswa</h2>
                 <a href="?aksi=tambah" class="btn btn-primary btn-sm">+ Tambah</a>
@@ -175,7 +173,6 @@ $no = $offset + 1;
                         </tbody>
                     </table>
                 </div>
-                <!-- PAGINATION -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <small class="text-muted">Menampilkan <?= $total ? $offset + 1 : 0; ?> s.d. <?= min($offset + $limit, $total); ?> dari <?= $total; ?> data</small>
                     <ul class="pagination pagination-sm mb-0">
