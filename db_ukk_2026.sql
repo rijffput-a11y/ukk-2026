@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 05 Nov 2026 pada 05.30
+-- Waktu pembuatan: 16 Nov 2026 pada 06.08
 -- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Versi PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -326,7 +326,14 @@ CREATE TABLE `t_pelanggaran_siswa` (
 --
 
 INSERT INTO `t_pelanggaran_siswa` (`id`, `tahun_ajaran_id`, `siswa_id`, `nama_siswa`, `kelas_id`, `nama_kelas`, `pelanggaran_id`, `nama_pelanggaran`, `pelanggaran_kategori_id`, `guru_id`, `nama_guru`, `tanggal`, `keterangan`, `poin`, `tindakan`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 23, 'SHERLY SATRIANI', 33, 'XII RPL 2', 2, 'Keluar kelas tanpa izin saat jam pelajaran', 1, 32, 'Aldi Maulana, S.Pd', '2026-11-05', NULL, 15, NULL, 'Pending', '2026-11-05 03:03:13', '2026-11-05 03:03:13');
+(1, 1, 7, 'JUNITA PUTRI NUR RAHMAN', 33, 'XII RPL 2', 1, 'Terlambat hadir di sekolah', 1, 9, 'Asep Bastaman', '2026-11-16', NULL, 10, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:27:13', '2026-11-16 04:28:49'),
+(2, 1, 27, 'ALFIN RAHADIAN', 32, 'XII RPL 1', 10, 'Tidak sopan / berkata kasar kepada guru / staf', 4, 9, 'Asep Bastaman', '2026-11-16', NULL, 30, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:27:51', '2026-11-16 04:29:22'),
+(3, 1, 27, 'ALFIN RAHADIAN', 32, 'XII RPL 1', 8, 'Alpha (Tidak masuk tanpa keterangan)', 3, 9, 'Asep Bastaman', '2026-11-16', NULL, 20, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:28:11', '2026-11-16 04:29:29'),
+(4, 1, 28, 'ALISA RAMADHANI', 32, 'XII RPL 1', 5, 'Seragam tidak sesuai ketentuan / jadwal', 2, 9, 'Asep Bastaman', '2026-11-16', NULL, 15, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:28:37', '2026-11-16 04:29:40'),
+(5, 1, 36, 'JULIANDA DHARMA PANGESTU', 32, 'XII RPL 1', 1, 'Terlambat hadir di sekolah', 1, 9, 'Asep Bastaman', '2026-11-16', NULL, 10, NULL, 'Pending', '2026-11-16 04:30:38', '2026-11-16 04:30:38'),
+(6, 1, 23, 'SHERLY SATRIANI', 33, 'XII RPL 2', 3, 'Tidak mengikuti upacara bendera', 1, 17, 'Wiwid Yulianti, S.Pd', '2026-11-16', NULL, 20, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:38:06', '2026-11-16 04:38:16'),
+(7, 1, 16, 'RANI MEILANI', 33, 'XII RPL 2', 1, 'Terlambat hadir di sekolah', 1, 36, 'Yusi Luthfiani, S.Sos.I', '2026-11-16', NULL, 10, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:38:42', '2026-11-16 04:38:47'),
+(8, 1, 19, 'RIZKI PERMATA SUGIANTO', 33, 'XII RPL 2', 2, 'Keluar kelas tanpa izin saat jam pelajaran', 1, 21, 'Erna Suryani, S.Pd', '2026-11-16', NULL, 15, 'Peringatan lisan dan teguran', 'Selesai', '2026-11-16 04:39:49', '2026-11-16 04:40:01');
 
 -- --------------------------------------------------------
 
@@ -358,7 +365,7 @@ INSERT INTO `t_siswa` (`id`, `nis`, `nisn`, `nama`, `jenis_kelamin`, `tanggal_la
 (4, '102410547', '0089123404', 'ARADEA KANDI', 'L', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
 (5, '102410548', '0089123405', 'ARFA DIESA OKMALELIZA', 'P', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
 (6, '102410549', '0089123406', 'FITRI NUR SYIAMI', 'P', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
-(7, '102410550', '0089123407', 'JUNITA PUTRI NUR RAHMAN', 'P', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
+(7, '102410550', '0089123407', 'JUNITA PUTRI NUR RAHMAN', 'P', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-16 04:18:28'),
 (8, '102410551', '0089123408', 'MOHAMMAD ATALARIK ALI SYAHBANA', 'L', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
 (9, '102410552', '0089123409', 'MUHAMAD FAHRIL FAHRUROZI', 'L', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
 (10, '102410750', '0089123410', 'MUHAMMAD ADNAN SYAEFUL ISLAMI', 'L', '2008-01-01', 'Tasikmalaya', 1, '2026-11-05 02:51:30', '2026-11-05 02:51:30'),
@@ -649,13 +656,13 @@ ALTER TABLE `t_pelanggaran_kategori`
 -- AUTO_INCREMENT untuk tabel `t_pelanggaran_siswa`
 --
 ALTER TABLE `t_pelanggaran_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_siswa`
 --
 ALTER TABLE `t_siswa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_tahun_ajaran`
