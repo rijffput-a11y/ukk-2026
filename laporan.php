@@ -126,7 +126,7 @@ if ($role === 'admin') {
 function cetakSurat(jenisSP, namaSiswa, nis, kelas, pelanggaran, poin, tanggal) {
     let win = window.open('', '', 'height=750,width=850');
     win.document.write('<html><head><title>Surat ' + jenisSP + '</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"><style>body { padding: 40px; font-family: Arial, sans-serif; }</style></head><body>');
-    win.document.write('<div class="text-center mb-4"><h5>PEMERINTAH PROVINSI / KABUPATEN</h5><h4>SEKOLAH MENENGAH KEJURUAN (SMK)</h4><hr></div>');
+    win.document.write('<div class="text-center mb-4"><h6>SEKOLAH MENENGAH KEJURUAN (SMK)</h6><h3>SMK MUHAMMADIYAH TASIKMALAYA</h3><hr></div>');
     win.document.write('<h4 class="text-center mb-4">SURAT ' + jenisSP + '</h4>');
     win.document.write('<p>Kepada Yth.<br>Orang Tua/Wali Murid: <strong>' + namaSiswa + '</strong> (Kelas: ' + kelas + ' / NIS: ' + nis + ')<br>di Tempat</p>');
     win.document.write('<p>Dengan hormat, siswa/i tersebut memiliki total akumulasi poin <strong>' + poin + '</strong> dengan pelanggaran terakhir: <strong>' + pelanggaran + '</strong> pada tanggal ' + tanggal + '.</p>');

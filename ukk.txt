@@ -1,0 +1,5 @@
+Ketika masuk tanpa di isi ps dan em muncul pesan gagal login yang tidak menyebutkan mana yang salah
+nonaktif satu siswa yang sudah punya Riwayat pelanggaran siswa tidak muncul di pilihan from pencatatan
+catat pelanggaran kelas_id dan tahun_ajaran_id terisi dari penempatan siswa
+catat pelanggaran siswa belum punya penempatan system monalak atau memberi pesan
+Riwayat buka satu siswa yang memiliki beberapa catatan tampil lengkap tanggal,jenis,poin keterangan,tindakan
